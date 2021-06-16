@@ -11,7 +11,7 @@ from tests.conftest import TestClient
 
 class Returns200Test:
     def should_filter_by_venue_when_user_is_admin_and_request_specific_venue_with_no_rights_on_it(
-        self, app, db_session, assert_num_queries
+        self, app, assert_num_queries
     ):
         # Given
         admin = users_factories.UserFactory(isAdmin=True, isBeneficiary=False)
@@ -76,9 +76,7 @@ class Returns200Test:
             }
         ]
 
-    def should_filter_by_venue_when_user_is_not_admin_and_request_specific_venue_with_rights_on_it(
-        self, app, db_session
-    ):
+    def should_filter_by_venue_when_user_is_not_admin_and_request_specific_venue_with_rights_on_it(self, app):
         # Given
         pro = users_factories.UserFactory(isAdmin=False, isBeneficiary=False)
         offerer = offers_factories.OffererFactory()
@@ -101,7 +99,7 @@ class Returns200Test:
         assert len(offers) == 1
 
     @patch("pcapi.routes.pro.offers.offers_api.list_offers_for_pro_user")
-    def should_filter_offers_by_given_venue_id(self, mocked_list_offers, app, db_session):
+    def should_filter_offers_by_given_venue_id(self, mocked_list_offers, app):
         # given
         user = users_factories.UserFactory()
         offerer = offers_factories.OffererFactory()
@@ -129,7 +127,7 @@ class Returns200Test:
         )
 
     @patch("pcapi.routes.pro.offers.offers_api.list_offers_for_pro_user")
-    def should_filter_offers_by_given_status(self, mocked_list_offers, app, db_session):
+    def should_filter_offers_by_given_status(self, mocked_list_offers, app):
         # given
         user = users_factories.UserFactory()
         offerer = offers_factories.OffererFactory()
@@ -154,7 +152,7 @@ class Returns200Test:
         )
 
     @patch("pcapi.routes.pro.offers.offers_api.list_offers_for_pro_user")
-    def should_filter_offers_by_given_offerer_id(self, mocked_list_offers, app, db_session):
+    def should_filter_offers_by_given_offerer_id(self, mocked_list_offers, app):
         # given
         user = users_factories.UserFactory()
         offerer = offers_factories.OffererFactory()
@@ -182,7 +180,7 @@ class Returns200Test:
         )
 
     @patch("pcapi.routes.pro.offers.offers_api.list_offers_for_pro_user")
-    def should_filter_offers_by_given_creation_mode(self, mocked_list_offers, app, db_session):
+    def should_filter_offers_by_given_creation_mode(self, mocked_list_offers, app):
         # given
         user = users_factories.UserFactory()
         offerer = offers_factories.OffererFactory()
@@ -207,7 +205,7 @@ class Returns200Test:
         )
 
     @patch("pcapi.routes.pro.offers.offers_api.list_offers_for_pro_user")
-    def test_results_are_filtered_by_given_period_beginning_date(self, mocked_list_offers, app, db_session):
+    def test_results_are_filtered_by_given_period_beginning_date(self, mocked_list_offers, app):
         # given
         user = users_factories.UserFactory()
         offerer = offers_factories.OffererFactory()
@@ -236,7 +234,7 @@ class Returns200Test:
         )
 
     @patch("pcapi.routes.pro.offers.offers_api.list_offers_for_pro_user")
-    def test_results_are_filtered_by_given_period_ending_date(self, mocked_list_offers, app, db_session):
+    def test_results_are_filtered_by_given_period_ending_date(self, mocked_list_offers, app):
         # given
         user = users_factories.UserFactory()
         offerer = offers_factories.OffererFactory()
@@ -266,7 +264,7 @@ class Returns200Test:
 
 
 class Returns404Test:
-    def when_requested_venue_does_not_exist(self, app, db_session):
+    def when_requested_venue_does_not_exist(self, app):
         # Given
         user = users_factories.UserFactory()
 
@@ -277,7 +275,7 @@ class Returns404Test:
         assert response.status_code == 404
         assert response.json == {"global": ["La page que vous recherchez n'existe pas"]}
 
-    def should_return_no_offers_when_user_has_no_rights_on_requested_venue(self, app, db_session):
+    def should_return_no_offers_when_user_has_no_rights_on_requested_venue(self, app):
         # Given
         user = users_factories.UserFactory()
         offerer = offers_factories.OffererFactory()
@@ -292,7 +290,7 @@ class Returns404Test:
         assert response.status_code == 200
         assert response.json == []
 
-    def should_return_no_offers_when_user_offerer_is_not_validated(self, app, db_session):
+    def should_return_no_offers_when_user_offerer_is_not_validated(self, app):
         # Given
         user = users_factories.UserFactory()
         offerer = offers_factories.OffererFactory()

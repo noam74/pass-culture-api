@@ -1,7 +1,5 @@
 from unittest.mock import patch
 
-import pytest
-
 from pcapi.admin.custom_views.many_offers_operations_view import _get_current_criteria_on_active_offers
 from pcapi.admin.custom_views.many_offers_operations_view import _get_products_compatible_status
 import pcapi.core.offers.factories as offers_factories
@@ -13,7 +11,6 @@ from pcapi.models.product import Product
 from tests.conftest import TestClient
 
 
-@pytest.mark.usefixtures("db_session")
 class ManyOffersOperationsViewTest:
     @patch("wtforms.csrf.session.SessionCSRF.validate_csrf_token")
     def test_search_product_from_isbn(self, mocked_validate_csrf_token, app):
@@ -197,9 +194,7 @@ class ManyOffersOperationsViewTest:
 
     @patch("pcapi.core.search.async_index_offer_ids")
     @patch("wtforms.csrf.session.SessionCSRF.validate_csrf_token")
-    def test_edit_product_gcu_compatibility(
-        self, mocked_validate_csrf_token, mocked_async_index_offer_ids, app, db_session
-    ):
+    def test_edit_product_gcu_compatibility(self, mocked_validate_csrf_token, mocked_async_index_offer_ids, app):
         # Given
         users_factories.UserFactory(email="admin@example.com", isAdmin=True)
         offerer = offers_factories.OffererFactory()

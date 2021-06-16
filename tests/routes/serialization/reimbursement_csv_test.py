@@ -13,7 +13,6 @@ from pcapi.routes.serialization.reimbursement_csv_serialize import generate_reim
 
 
 class ReimbursementDetailsTest:
-    @pytest.mark.usefixtures("db_session")
     def test_reimbursementDetail_as_csv(self, app):
         # given
         payment = PaymentFactory(
@@ -45,7 +44,6 @@ class ReimbursementDetailsTest:
         assert raw_csv[14] == "21,00"
         assert raw_csv[15] == "Remboursement en cours"
 
-    @pytest.mark.usefixtures("db_session")
     def test_reimbursementDetail_with_custom_rule_as_csv(self, app):
         # given
         payment = PaymentWithCustomRuleFactory(
@@ -100,7 +98,6 @@ def test_human_friendly_status_contains_details_for_not_processable_transaction_
     assert human_friendly_status == "Remboursement impossible"
 
 
-@pytest.mark.usefixtures("db_session")
 def test_generate_reimbursement_details_csv():
     # given
     payment = PaymentFactory(
@@ -131,7 +128,6 @@ def test_generate_reimbursement_details_csv():
     )
 
 
-@pytest.mark.usefixtures("db_session")
 def test_find_all_offerer_reimbursement_details():
     offerer = offers_factories.OffererFactory()
     venue1 = offers_factories.VenueFactory(managingOfferer=offerer)

@@ -27,7 +27,6 @@ from pcapi.models import VenueProvider
 from pcapi.scripts.offerer.delete_cascade_offerer_by_id import delete_cascade_offerer_by_id
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_abort_when_offerer_has_any_bookings():
     # Given
     offerer_to_delete = offers_factories.OffererFactory()
@@ -49,7 +48,6 @@ def test_delete_cascade_offerer_should_abort_when_offerer_has_any_bookings():
     assert Booking.query.count() == 1
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_managed_venues_offers_and_stocks():
     # Given
     offerer_to_delete = offers_factories.OffererFactory()
@@ -67,7 +65,6 @@ def test_delete_cascade_offerer_should_remove_managed_venues_offers_and_stocks()
     assert Stock.query.count() == 1
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_all_user_attachments_to_deleted_offerer():
     # Given
     user = users_factories.UserFactory()
@@ -84,7 +81,6 @@ def test_delete_cascade_offerer_should_remove_all_user_attachments_to_deleted_of
     assert User.query.count() == 1
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_api_key_of_offerer():
     # Given
     offerer_to_delete = offers_factories.OffererFactory()
@@ -99,7 +95,6 @@ def test_delete_cascade_offerer_should_remove_api_key_of_offerer():
     assert ApiKey.query.count() == 1
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_products_owned_by_offerer():
     # Given
     offerer_to_delete = offers_factories.OffererFactory()
@@ -114,7 +109,6 @@ def test_delete_cascade_offerer_should_remove_products_owned_by_offerer():
     assert Product.query.count() == 1
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_bank_informations_of_offerer():
     # Given
     offerer_to_delete = offers_factories.OffererFactory()
@@ -129,7 +123,6 @@ def test_delete_cascade_offerer_should_remove_bank_informations_of_offerer():
     assert BankInformation.query.count() == 1
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_bank_informations_of_managed_venue():
     # Given
     venue = offers_factories.VenueFactory()
@@ -146,7 +139,6 @@ def test_delete_cascade_offerer_should_remove_bank_informations_of_managed_venue
     assert BankInformation.query.count() == 1
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_mediations_of_managed_offers():
     # Given
     offerer_to_delete = offers_factories.OffererFactory()
@@ -163,7 +155,6 @@ def test_delete_cascade_offerer_should_remove_mediations_of_managed_offers():
     assert Mediation.query.count() == 1
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_favorites_of_managed_offers():
     # Given
     offerer_to_delete = offers_factories.OffererFactory()
@@ -180,7 +171,6 @@ def test_delete_cascade_offerer_should_remove_favorites_of_managed_offers():
     assert Favorite.query.count() == 1
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_criterion_attachment_of_managed_offers():
     # Given
     offerer_to_delete = offers_factories.OffererFactory()
@@ -198,7 +188,6 @@ def test_delete_cascade_offerer_should_remove_criterion_attachment_of_managed_of
     assert Criterion.query.count() == 2
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_venue_synchronization_to_provider():
     # Given
     offerer_to_delete = offers_factories.OffererFactory()
@@ -215,7 +204,6 @@ def test_delete_cascade_offerer_should_remove_venue_synchronization_to_provider(
     assert Provider.query.count() > 0
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_cascade_offerer_should_remove_venue_synchronization_to_allocine_provider():
     # Given
     offerer_to_delete = offers_factories.OffererFactory()

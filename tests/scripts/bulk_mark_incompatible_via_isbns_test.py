@@ -1,5 +1,3 @@
-import pytest
-
 from pcapi.core.offers.factories import OfferFactory
 from pcapi.core.offers.factories import ProductFactory
 from pcapi.models import Offer
@@ -9,7 +7,6 @@ from pcapi.scripts.bulk_mark_incompatible_via_isbns import bulk_mark_incompatibl
 
 
 class BulkMarkIncompatibleViaIsbnsTest:
-    @pytest.mark.usefixtures("db_session")
     def test_should_mark_offers_and_products_as_incompatible_via_isbn(self):
         # Given
         product = ProductFactory(id=1, extraData={"isbn": "ABCDEFG"})

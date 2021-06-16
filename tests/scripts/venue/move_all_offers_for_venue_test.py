@@ -1,7 +1,5 @@
 from unittest import mock
 
-import pytest
-
 from pcapi.model_creators.generic_creators import create_offerer
 from pcapi.model_creators.generic_creators import create_venue
 from pcapi.model_creators.specific_creators import create_offer_with_thing_product
@@ -10,7 +8,6 @@ from pcapi.repository import repository
 from pcapi.scripts.venue.move_all_offers_for_venue import move_all_offers_from_venue_to_other_venue
 
 
-@pytest.mark.usefixtures("db_session")
 class MoveAllOffersFromVenueToOtherVenueTest:
     @mock.patch("pcapi.core.search.async_index_offer_ids")
     def should_change_venue_id_to_destination_id_for_offers_linked_to_origin_venue(self, mock_async_index_offer_ids):

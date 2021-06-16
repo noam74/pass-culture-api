@@ -18,7 +18,6 @@ from pcapi.routes.serialization.venue_provider_serialize import PostVenueProvide
 
 
 class CreateVenueProviderTest:
-    @pytest.mark.usefixtures("db_session")
     def test_prevent_creation_for_non_existing_provider(self):
         # Given
         providerId = "AE"
@@ -51,7 +50,6 @@ def create_stock(isbn, siret, **kwargs):
 
 
 class SynchronizeStocksTest:
-    @pytest.mark.usefixtures("db_session")
     @freeze_time("2020-10-15 09:00:00")
     @mock.patch("pcapi.core.search.async_index_offer_ids")
     def test_execution(self, mock_async_index_offer_ids):
@@ -135,7 +133,7 @@ class SynchronizeStocksTest:
             {stock.offer.id, offer.id, stock_with_booking.offer.id, created_offer.id, second_created_offer.id}
         )
 
-    def test_build_new_offers_from_stock_details(self, db_session):
+    def test_build_new_offers_from_stock_details(self):
         # Given
         spec = [
             {  # known offer, must be ignored

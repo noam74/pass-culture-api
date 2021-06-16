@@ -1,5 +1,3 @@
-import pytest
-
 from pcapi.core.users.factories import FavoriteFactory
 from pcapi.core.users.factories import UserFactory
 from pcapi.models import Deposit
@@ -8,7 +6,6 @@ from pcapi.repository import repository
 from pcapi.scripts.beneficiary.delete_or_suspend_account_from_file import suspend_or_delete_from_file
 
 
-@pytest.mark.usefixtures("db_session")
 def test_delete_user():
     admin = UserFactory(isAdmin=True)
     user_without_deposit = UserFactory(email="user_to_delete@example.com")
@@ -22,7 +19,6 @@ def test_delete_user():
     assert User.query.all() == [admin]
 
 
-@pytest.mark.usefixtures("db_session")
 def test_suspend_user():
     admin = UserFactory(isAdmin=True)
     user_with_deposit = UserFactory(email="user_to_suspend@example.com")

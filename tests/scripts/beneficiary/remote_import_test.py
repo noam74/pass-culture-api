@@ -6,7 +6,6 @@ from unittest.mock import Mock
 from unittest.mock import patch
 
 from mailjet_rest import Client
-import pytest
 
 import pcapi.core.fraud.factories as fraud_factories
 import pcapi.core.fraud.models as fraud_models
@@ -32,7 +31,6 @@ NOW = datetime.utcnow()
 ONE_WEEK_AGO = NOW - timedelta(days=7)
 
 
-@pytest.mark.usefixtures("db_session")
 class RunTest:
     @patch("pcapi.scripts.beneficiary.remote_import.get_closed_application_ids_for_demarche_simplifiee")
     @patch("pcapi.scripts.beneficiary.remote_import.find_applications_ids_to_retry")
@@ -308,7 +306,6 @@ class RunTest:
 
 class ProcessBeneficiaryApplicationTest:
     @override_features(FORCE_PHONE_VALIDATION=False)
-    @pytest.mark.usefixtures("db_session")
     def test_new_beneficiaries_are_recorded_with_deposit(self, app):
         # given
         app.mailjet_client = Mock(spec=Client)
@@ -342,7 +339,6 @@ class ProcessBeneficiaryApplicationTest:
 
         assert len(push_testing.requests) == 1
 
-    @pytest.mark.usefixtures("db_session")
     def test_an_import_status_is_saved_if_beneficiary_is_created(self, app):
         # given
         app.mailjet_client = Mock(spec=Client)
@@ -376,7 +372,6 @@ class ProcessBeneficiaryApplicationTest:
     @patch("pcapi.scripts.beneficiary.remote_import.create_beneficiary_from_application")
     @patch("pcapi.scripts.beneficiary.remote_import.repository")
     @patch("pcapi.scripts.beneficiary.remote_import.send_activation_email")
-    @pytest.mark.usefixtures("db_session")
     def test_account_activation_email_is_sent(
         self, send_activation_email, mock_repository, create_beneficiary_from_application, app
     ):
@@ -396,7 +391,6 @@ class ProcessBeneficiaryApplicationTest:
     @patch("pcapi.scripts.beneficiary.remote_import.create_beneficiary_from_application")
     @patch("pcapi.scripts.beneficiary.remote_import.repository")
     @patch("pcapi.scripts.beneficiary.remote_import.send_activation_email")
-    @pytest.mark.usefixtures("db_session")
     def test_error_is_collected_if_beneficiary_could_not_be_saved(
         self, send_activation_email, mock_repository, create_beneficiary_from_application, app
     ):
@@ -572,7 +566,6 @@ class ParseBeneficiaryInformationTest:
             assert information.procedure_id == 201201
 
 
-@pytest.mark.usefixtures("db_session")
 class RunIntegrationTest:
     EMAIL = "john.doe@example.com"
     BENEFICIARY_BIRTH_DATE = date.today() - timedelta(days=6752)  # ~18.5 years

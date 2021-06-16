@@ -8,7 +8,6 @@ from pcapi.core.users.models import UserRole
 from pcapi.repository import repository
 
 
-@pytest.mark.usefixtures("db_session")
 class UserTest:
     class UserRoleTest:
         def test_has_admin_role(self):
@@ -244,7 +243,6 @@ class UserTest:
             assert not user.has_institutional_project_redactor_role
 
 
-@pytest.mark.usefixtures("db_session")
 class SuperUserTest:
     @override_settings(SUPER_ADMIN_EMAIL_ADDRESSES="super@admin.user", IS_PROD=True)
     def test_super_user_prod(self):

@@ -9,7 +9,6 @@ import pcapi.core.users.models as users_models
 import pcapi.models
 
 
-@pytest.mark.usefixtures("db_session")
 class BeneficiaryFraudListViewTest:
     def test_list_view(self, client):
         admin = users_factories.UserFactory(email="admin@example.com", isAdmin=True)
@@ -22,7 +21,6 @@ class BeneficiaryFraudListViewTest:
         assert response.status_code == 200
 
 
-@pytest.mark.usefixtures("db_session")
 class BeneficiaryFraudDetailViewTest:
     def test_detail_view(self, client):
         admin = users_factories.UserFactory(email="admin@example.com", isAdmin=True)
@@ -34,7 +32,6 @@ class BeneficiaryFraudDetailViewTest:
         assert response.status_code == 200
 
 
-@pytest.mark.usefixtures("db_session")
 class BeneficiaryFraudValidationViewTest:
     @override_features(BENEFICIARY_VALIDATION_AFTER_FRAUD_CHECKS=True)
     def test_validation_view_auth_required(self, client):
@@ -140,7 +137,6 @@ class BeneficiaryFraudValidationViewTest:
         assert user.lastName == jouve_content.lastName
 
 
-@pytest.mark.usefixtures("db_session")
 class JouveUpdateIDPieceNumberTest:
     def setup_method(self, method):
         self.jouve_user = users_factories.UserFactory(isAdmin=True, roles=[users_models.UserRole.JOUVE])
@@ -193,7 +189,6 @@ class JouveUpdateIDPieceNumberTest:
         assert "<ul><li>dms</li></ul>" not in response.data.decode()
 
 
-@pytest.mark.usefixtures("db_session")
 class JouveAccessTest:
     """Specific tests to ensure JOUVE does not access anything else"""
 

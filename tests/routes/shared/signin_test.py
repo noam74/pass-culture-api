@@ -1,7 +1,5 @@
 import datetime
 
-import pytest
-
 from pcapi.model_creators.generic_creators import create_user
 from pcapi.models import UserSession
 from pcapi.repository import repository
@@ -12,7 +10,6 @@ from tests.conftest import TestClient
 
 
 class Returns200Test:
-    @pytest.mark.usefixtures("db_session")
     def when_account_is_known(self, app):
         # given
         user = create_user(
@@ -63,7 +60,6 @@ class Returns200Test:
             "roles": ["BENEFICIARY"],
         }
 
-    @pytest.mark.usefixtures("db_session")
     def when_user_has_no_departement_code(self, app):
         # given
         user = create_user(email="USER@example.COM", departement_code=None)
@@ -76,7 +72,6 @@ class Returns200Test:
         # then
         assert response.status_code == 200
 
-    @pytest.mark.usefixtures("db_session")
     def when_account_is_known_with_mixed_case_email(self, app):
         # given
         user = create_user(email="USER@example.COM")
@@ -89,7 +84,6 @@ class Returns200Test:
         # then
         assert response.status_code == 200
 
-    @pytest.mark.usefixtures("db_session")
     def when_account_is_known_with_trailing_spaces_in_email(self, app):
         # given
         user = create_user(email="user@example.com")
@@ -102,7 +96,6 @@ class Returns200Test:
         # then
         assert response.status_code == 200
 
-    @pytest.mark.usefixtures("db_session")
     def expect_a_new_user_session_to_be_recorded(self, app):
         # given
         user = create_user(email="user@example.com")
@@ -122,7 +115,6 @@ class Returns200Test:
 
 
 class Returns401Test:
-    @pytest.mark.usefixtures("db_session")
     def when_identifier_is_missing(self, app):
         # Given
         user = create_user()
@@ -136,7 +128,6 @@ class Returns401Test:
         assert response.status_code == 400
         assert response.json["identifier"] == ["none is not an allowed value"]
 
-    @pytest.mark.usefixtures("db_session")
     def when_identifier_is_incorrect(self, app):
         # Given
         user = create_user()
@@ -150,7 +141,6 @@ class Returns401Test:
         assert response.status_code == 401
         assert response.json["identifier"] == ["Identifiant ou mot de passe incorrect"]
 
-    @pytest.mark.usefixtures("db_session")
     def when_password_is_missing(self, app):
         # Given
         user = create_user()
@@ -164,7 +154,6 @@ class Returns401Test:
         assert response.status_code == 400
         assert response.json["password"] == ["none is not an allowed value"]
 
-    @pytest.mark.usefixtures("db_session")
     def when_password_is_incorrect(self, app):
         # Given
         user = create_user()
@@ -178,7 +167,6 @@ class Returns401Test:
         assert response.status_code == 401
         assert response.json["identifier"] == ["Identifiant ou mot de passe incorrect"]
 
-    @pytest.mark.usefixtures("db_session")
     def when_account_is_not_validated(self, app):
         # Given
         user = create_user()

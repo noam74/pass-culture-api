@@ -1,7 +1,5 @@
 from unittest.mock import patch
 
-import pytest
-
 import pcapi.core.offerers.factories as offerers_factories
 import pcapi.core.offers.factories as offers_factories
 from pcapi.core.testing import override_features
@@ -34,7 +32,6 @@ def populate_missing_data_from_venue(venue_data, venue):
 
 
 class Returns200Test:
-    @pytest.mark.usefixtures("db_session")
     def test_should_update_venue(self, app) -> None:
         # given
         user_offerer = offers_factories.UserOffererFactory()
@@ -71,7 +68,6 @@ class Returns200Test:
         assert "validationToken" not in json
         assert venue.isValidated
 
-    @pytest.mark.usefixtures("db_session")
     @override_features(ENABLE_VENUE_WITHDRAWAL_DETAILS=True)
     @patch("pcapi.routes.pro.venues.update_all_venue_offers_withdrawal_details_job.delay")
     def test_edit_venue_withdrawal_details_with_applied_on_all_offers(
@@ -103,7 +99,6 @@ class Returns200Test:
             venue, "Ceci est un texte de modalités de retrait"
         )
 
-    @pytest.mark.usefixtures("db_session")
     def when_siret_does_not_change(self, app) -> None:
         # Given
         user_offerer = offers_factories.UserOffererFactory()

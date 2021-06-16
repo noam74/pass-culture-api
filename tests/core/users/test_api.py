@@ -65,9 +65,6 @@ from pcapi.routes.serialization.users import ProUserCreationBodyModel
 import tests
 
 
-pytestmark = pytest.mark.usefixtures("db_session")
-
-
 class GenerateAndSaveTokenTest:
     def test_generate_and_save_token(self, app):
         user = users_factories.UserFactory(email="py@test.com")
@@ -327,7 +324,6 @@ class UnsuspendAccountTest:
         assert user.isActive
 
 
-@pytest.mark.usefixtures("db_session")
 class ChangeUserEmailTest:
     @freeze_time("2020-10-15 09:00:00")
     def test_change_user_email(self):
@@ -600,7 +596,6 @@ class SetOffererDepartementCodeTest:
         assert updated_user.departementCode == "75"
 
 
-@pytest.mark.usefixtures("db_session")
 class SetProTutoAsSeenTest:
     def should_set_has_seen_pro_tutorials_to_true_for_user(self):
         # Given
@@ -613,7 +608,6 @@ class SetProTutoAsSeenTest:
         assert User.query.one().hasSeenProTutorials == True
 
 
-@pytest.mark.usefixtures("db_session")
 class UpdateUserInfoTest:
     def test_update_user_info(self):
         user = users_factories.UserFactory(email="initial@example.com")
@@ -636,7 +630,6 @@ class UpdateUserInfoTest:
         assert user.email == "new@example.com"
 
 
-@pytest.mark.usefixtures("db_session")
 class DomainsCreditTest:
     def test_get_domains_credit_v1(self):
         user = users_factories.UserFactory(deposit__version=1)
@@ -716,7 +709,6 @@ class DomainsCreditTest:
         assert not get_domains_credit(user)
 
 
-@pytest.mark.usefixtures("db_session")
 class UpdateBeneficiaryMandatoryInformationTest:
     def test_all_steps_to_become_beneficiary(self):
         """
@@ -818,7 +810,6 @@ class CreateProUserTest:
         assert pro_user.deposits != []
 
 
-@pytest.mark.usefixtures("db_session")
 class CreateInstituationalProjectRedactorTest:
     @patch("pcapi.core.users.api.get_institutional_project_redactor_by_email")
     def test_create_institutional_project_redactor_with_adage_informations(

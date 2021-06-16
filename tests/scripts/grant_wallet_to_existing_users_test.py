@@ -6,7 +6,7 @@ from pcapi.repository import repository
 from pcapi.scripts.grant_wallet_to_existing_users import grant_wallet_to_existing_users
 
 
-def test_should_grant_wallet_to_existing_users(app, db_session):
+def test_should_grant_wallet_to_existing_users(app):
     # given
     beneficiary = create_user(email="email@example.com")
     beneficiary_2 = create_user(email="email2@example.com")
@@ -30,7 +30,7 @@ def test_should_grant_wallet_to_existing_users(app, db_session):
 
 
 @override_features(APPLY_BOOKING_LIMITS_V2=False)
-def test_should_grant_wallet_to_existing_users_with_v1_deposit(app, db_session):
+def test_should_grant_wallet_to_existing_users_with_v1_deposit(app):
     # given
     beneficiary = create_user(email="email@example.com")
     beneficiary_2 = create_user(email="email2@example.com")

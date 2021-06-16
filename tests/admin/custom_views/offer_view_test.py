@@ -20,15 +20,14 @@ from tests.conftest import clean_database
 
 
 class BeneficiaryUserViewTest:
-    def test_max_one_searchable_on_offer_view(self, db_session):
+    def test_max_one_searchable_on_offer_view(self):
         # Given
-        offer_view = OfferView(Offer, db_session)
+        offer_view = OfferView(Offer)
 
         # Then
         assert offer_view.column_searchable_list is None or len(offer_view.column_searchable_list) == 0
 
 
-@pytest.mark.usefixtures("db_session")
 class OfferValidationViewTest:
     @patch("wtforms.csrf.session.SessionCSRF.validate_csrf_token")
     @patch("pcapi.admin.custom_views.offer_view.get_offerer_legal_category")

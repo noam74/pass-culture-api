@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import pytest
-
 from pcapi.core.bookings.factories import BookingFactory
 from pcapi.core.bookings.models import Booking
 from pcapi.core.bookings.models import BookingCancellationReasons
@@ -13,7 +11,6 @@ import pcapi.core.users.factories as users_factories
 from pcapi.scripts.booking.cancel_bookings_of_events_from_file import _cancel_bookings_of_offers_from_rows
 
 
-@pytest.mark.usefixtures("db_session")
 class CancelBookingsOfEventsFromFileTest:
     def test_cancel_bookings_of_offers_from_rows(self):
         beneficiary = users_factories.UserFactory(email="user@example.net")

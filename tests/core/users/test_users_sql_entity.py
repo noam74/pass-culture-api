@@ -16,7 +16,6 @@ from pcapi.models import ApiErrors
 from pcapi.repository import repository
 
 
-@pytest.mark.usefixtures("db_session")
 def test_cannot_create_admin_that_can_book(app):
     # Given
     user = create_user(is_beneficiary=True, is_admin=True)
@@ -26,7 +25,6 @@ def test_cannot_create_admin_that_can_book(app):
         repository.save(user)
 
 
-@pytest.mark.usefixtures("db_session")
 class HasAccessTest:
     def test_does_not_have_access_if_not_attached(self):
         offerer = offers_factories.OffererFactory()
@@ -57,7 +55,6 @@ class HasAccessTest:
 
 
 class WalletBalanceTest:
-    @pytest.mark.usefixtures("db_session")
     def test_balance_is_0_with_no_deposits_and_no_bookings(self):
         # given
         user = factories.UserFactory()
@@ -67,7 +64,6 @@ class WalletBalanceTest:
         assert user.wallet_balance == 0
         assert user.real_wallet_balance == 0
 
-    @pytest.mark.usefixtures("db_session")
     def test_balance_is_the_sum_of_deposits_if_no_bookings(self):
         # given
         user = factories.UserFactory(deposit__version=1)
@@ -77,7 +73,6 @@ class WalletBalanceTest:
         assert user.wallet_balance == 500 + 500
         assert user.real_wallet_balance == 500 + 500
 
-    @pytest.mark.usefixtures("db_session")
     def test_balance_count_non_expired_deposits(self):
         # given
         user = factories.UserFactory(deposit__version=1, deposit__expirationDate=None)
@@ -86,7 +81,6 @@ class WalletBalanceTest:
         assert user.wallet_balance == 500
         assert user.real_wallet_balance == 500
 
-    @pytest.mark.usefixtures("db_session")
     def test_balance_ignores_expired_deposits(self):
         # given
         user = factories.UserFactory(deposit__version=1, deposit__expirationDate=datetime(2000, 1, 1))
@@ -95,7 +89,6 @@ class WalletBalanceTest:
         assert user.wallet_balance == 0
         assert user.real_wallet_balance == 0
 
-    @pytest.mark.usefixtures("db_session")
     def test_balance(self):
         # given
         user = factories.UserFactory(deposit__version=1)
@@ -108,7 +101,6 @@ class WalletBalanceTest:
         assert user.wallet_balance == 500 - (10 + 2 * 20 + 3 * 30)
         assert user.real_wallet_balance == 500 - (10 + 2 * 20)
 
-    @pytest.mark.usefixtures("db_session")
     def test_real_balance_with_only_used_bookings(self):
         # given
         user = factories.UserFactory(deposit__version=1)
@@ -118,7 +110,6 @@ class WalletBalanceTest:
         assert user.wallet_balance == 500 - 30
         assert user.real_wallet_balance == 500
 
-    @pytest.mark.usefixtures("db_session")
     def test_balance_should_not_be_negative(self):
         # given
         user = factories.UserFactory(deposit__version=1)
@@ -132,7 +123,6 @@ class WalletBalanceTest:
 
 
 class HasPhysicalVenuesTest:
-    @pytest.mark.usefixtures("db_session")
     def test_webapp_user_has_no_venue(self, app):
         # given
         user = create_user()
@@ -143,7 +133,6 @@ class HasPhysicalVenuesTest:
         # then
         assert user.hasPhysicalVenues is False
 
-    @pytest.mark.usefixtures("db_session")
     def test_pro_user_has_one_digital_venue_by_default(self, app):
         # given
         user = create_user()
@@ -157,7 +146,6 @@ class HasPhysicalVenuesTest:
         # then
         assert user.hasPhysicalVenues is False
 
-    @pytest.mark.usefixtures("db_session")
     def test_pro_user_has_one_digital_venue_and_a_physical_venue(self, app):
         # given
         user = create_user()
@@ -172,7 +160,6 @@ class HasPhysicalVenuesTest:
 
 
 class needsToSeeTutorialsTest:
-    @pytest.mark.usefixtures("db_session")
     def test_beneficiary_has_to_see_tutorials_when_not_already_seen(self, app):
         # given
         user = create_user(is_beneficiary=True, has_seen_tutorials=False)
@@ -181,7 +168,6 @@ class needsToSeeTutorialsTest:
         # then
         assert user.needsToSeeTutorials is True
 
-    @pytest.mark.usefixtures("db_session")
     def test_beneficiary_has_not_to_see_tutorials_when_already_seen(self, app):
         # given
         user = create_user(is_beneficiary=True, has_seen_tutorials=True)
@@ -190,7 +176,6 @@ class needsToSeeTutorialsTest:
         # then
         assert user.needsToSeeTutorials is False
 
-    @pytest.mark.usefixtures("db_session")
     def test_pro_user_has_not_to_see_tutorials_when_already_seen(self, app):
         # given
         user = create_user(is_beneficiary=False)
@@ -221,7 +206,6 @@ class CalculateAgeTest:
         )
 
 
-@pytest.mark.usefixtures("db_session")
 class DepositVersionTest:
     def test_return_the_deposit(self):
         # given
@@ -239,7 +223,6 @@ class DepositVersionTest:
         assert user.deposit_version == None
 
 
-@pytest.mark.usefixtures("db_session")
 class NotificationSubscriptionsTest:
     def test_notification_subscriptions(self):
         user = UserFactory(notificationSubscriptions={"marketing_push": False})

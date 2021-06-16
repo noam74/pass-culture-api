@@ -5,7 +5,7 @@ from pcapi.scripts.payment.mark_payments_as_sent import mark_payments_as_sent
 
 
 class MarkPaymentsAsSentTest:
-    def test_mark_payments_as_sent(self, app, db_session):
+    def test_mark_payments_as_sent(self, app):
         # Given
         payment1 = payment_factories.PaymentFactory(statuses=[], transactionLabel="transaction_label")
         payment2 = payment_factories.PaymentFactory(statuses=[], transactionLabel="transaction_label")
@@ -32,7 +32,7 @@ class MarkPaymentsAsSentTest:
         assert len(payments_statuses_sent) == 4
         assert set(status.payment for status in payments_statuses_sent) == set(expected_payments_to_be_marked_as_sent)
 
-    def test_mark_payments_as_sent_does_not_fail_when_no_data(self, app, db_session):
+    def test_mark_payments_as_sent_does_not_fail_when_no_data(self, app):
         # Given
         mark_payments_as_sent("transaction_label", 2)
 

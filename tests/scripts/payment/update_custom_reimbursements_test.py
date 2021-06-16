@@ -1,8 +1,6 @@
 import datetime
 import io
 
-import pytest
-
 import pcapi.core.offers.factories as offers_factories
 import pcapi.core.payments.factories as payments_factories
 import pcapi.core.payments.models as payments_models
@@ -10,7 +8,6 @@ from pcapi.scripts.payment.update_custom_reimbursements import update_from_csv_f
 from pcapi.utils.human_ids import humanize
 
 
-@pytest.mark.usefixtures("db_session")
 def test_update_from_csv_file_basics():
     offer = offers_factories.OfferFactory()
 
@@ -31,7 +28,6 @@ def test_update_from_csv_file_basics():
     assert rule.timespan.upper is None
 
 
-@pytest.mark.usefixtures("db_session")
 def test_update_from_csv_file_unknown_offer():
     # fmt: off
     csv = "\n".join((
@@ -45,7 +41,6 @@ def test_update_from_csv_file_unknown_offer():
     assert results["errors"] == ["line 2: File references unknown offer ABCD (68)"]
 
 
-@pytest.mark.usefixtures("db_session")
 def test_update_from_csv_file_detects_existing_rules_and_mismatches():
     rule1 = payments_factories.CustomReimbursementRuleFactory(amount=8)
     rule2 = payments_factories.CustomReimbursementRuleFactory(amount=8)

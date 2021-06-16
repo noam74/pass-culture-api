@@ -10,7 +10,7 @@ from tests.conftest import TestClient
 
 
 class Returns200Test:
-    def when_current_user_has_rights_on_offer(self, app, db_session):
+    def when_current_user_has_rights_on_offer(self, app):
         # given
         offer = offers_factories.OfferFactory()
         offers_factories.UserOffererFactory(
@@ -39,7 +39,7 @@ class Returns200Test:
 
 
 class Returns400Test:
-    def when_stock_is_on_an_offer_from_titelive_provider(self, app, db_session):
+    def when_stock_is_on_an_offer_from_titelive_provider(self, app):
         # given
         provider = offerers_factories.AllocineProviderFactory(localClass="TiteLiveThings")
         offer = offers_factories.OfferFactory(lastProvider=provider, idAtProviders="1")
@@ -55,7 +55,7 @@ class Returns400Test:
         assert response.status_code == 400
         assert response.json["global"] == ["Les offres importées ne sont pas modifiables"]
 
-    def test_delete_non_approved_offer_fails(self, app, db_session):
+    def test_delete_non_approved_offer_fails(self, app):
         pending_validation_offer = offers_factories.OfferFactory(validation=OfferValidationStatus.PENDING)
         stock = offers_factories.StockFactory(offer=pending_validation_offer)
         user = users_factories.UserFactory(isAdmin=True)
@@ -68,7 +68,7 @@ class Returns400Test:
 
 
 class Returns403Test:
-    def when_current_user_has_no_rights_on_offer(self, app, db_session):
+    def when_current_user_has_no_rights_on_offer(self, app):
         # given
         user = users_factories.UserFactory(email="notadmin@example.com")
         stock = offers_factories.StockFactory()

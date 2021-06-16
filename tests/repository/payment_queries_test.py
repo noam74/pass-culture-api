@@ -1,8 +1,6 @@
 import datetime
 import uuid
 
-import pytest
-
 import pcapi.core.bookings.factories as bookings_factories
 import pcapi.core.offers.factories as offers_factories
 import pcapi.core.payments.factories as factories
@@ -18,7 +16,6 @@ from pcapi.repository import repository
 
 
 class FindPaymentsByMessageTest:
-    @pytest.mark.usefixtures("db_session")
     def test_returns_payments_matching_message(self, app):
         # given
         user = users_factories.UserFactory()
@@ -45,7 +42,6 @@ class FindPaymentsByMessageTest:
         for payment in matching_payments:
             assert payment.paymentMessageName == "XML1"
 
-    @pytest.mark.usefixtures("db_session")
     def test_returns_nothing_if_message_is_not_matched(self, app):
         # given
         user = users_factories.UserFactory()
@@ -70,7 +66,6 @@ class FindPaymentsByMessageTest:
 
 
 class FindNotProcessableWithBankInformationTest:
-    @pytest.mark.usefixtures("db_session")
     def test_should_not_return_payments_to_retry_if_no_bank_information(self, app):
         # Given
         user = users_factories.UserFactory()
@@ -88,7 +83,6 @@ class FindNotProcessableWithBankInformationTest:
         # Then
         assert payments_to_retry == []
 
-    @pytest.mark.usefixtures("db_session")
     def test_should_return_payment_to_retry_if_bank_information_linked_to_offerer_and_current_status_is_not_processable(
         self, app
     ):
@@ -114,7 +108,6 @@ class FindNotProcessableWithBankInformationTest:
         # Then
         assert not_processable_payment in payments_to_retry
 
-    @pytest.mark.usefixtures("db_session")
     def test_should_not_return_payments_to_retry_if_bank_information_linked_to_offerer_and_current_status_is_not_not_processable(
         self, app
     ):
@@ -141,7 +134,6 @@ class FindNotProcessableWithBankInformationTest:
         # Then
         assert payments_to_retry == []
 
-    @pytest.mark.usefixtures("db_session")
     def test_should_not_return_payment_to_retry_if_bank_information_status_is_not_accepted(self, app):
         # Given
         user = users_factories.UserFactory()
@@ -167,7 +159,6 @@ class FindNotProcessableWithBankInformationTest:
         # Then
         assert payments_to_retry == []
 
-    @pytest.mark.usefixtures("db_session")
     def test_should_return_payment_to_retry_if_bank_information_linked_to_venue_and_current_status_is_not_processable(
         self, app
     ):
@@ -194,7 +185,6 @@ class FindNotProcessableWithBankInformationTest:
         assert not_processable_payment in payments_to_retry
 
 
-@pytest.mark.usefixtures("db_session")
 def test_has_payment():
     booking = bookings_factories.BookingFactory()
     assert not payment_queries.has_payment(booking)
@@ -203,7 +193,6 @@ def test_has_payment():
     assert payment_queries.has_payment(booking)
 
 
-@pytest.mark.usefixtures("db_session")
 def test_get_payment_count_by_status():
     batch_date = datetime.datetime.now()
     other_date = datetime.datetime.now()
@@ -228,7 +217,6 @@ def test_get_payment_count_by_status():
     assert count == {"NOT_PROCESSABLE": 1, "PENDING": 1}
 
 
-@pytest.mark.usefixtures("db_session")
 class GetPaymentsByStatusTest:
     def test_without_batch_date(self):
         p1 = factories.PaymentFactory()
@@ -257,7 +245,6 @@ class GetPaymentsByStatusTest:
         assert query.all() == [ps.payment]
 
 
-@pytest.mark.usefixtures("db_session")
 def test_group_by_iban_and_bic():
     factories.PaymentFactory(
         author="select-me",
@@ -297,7 +284,6 @@ def test_group_by_iban_and_bic():
     }
 
 
-@pytest.mark.usefixtures("db_session")
 def test_group_by_venue():
     venue1 = offers_factories.VenueFactory(
         name="Venue 1",

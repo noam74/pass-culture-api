@@ -1,10 +1,7 @@
-import pytest
-
 from pcapi.core.offers import factories
 from pcapi.workers.update_all_venue_offers_withdrawal_details_job import update_all_venue_offers_withdrawal_details_job
 
 
-@pytest.mark.usefixtures("db_session")
 def test_update_all_venue_offers_withdrawal_details_job_test():
     venue = factories.VenueFactory()
     offer1 = factories.OfferFactory(venue=venue)

@@ -11,7 +11,7 @@ from pcapi.utils.human_ids import humanize
 
 
 class ConnectAllocineToVenueTest:
-    def should_connect_venue_to_allocine_provider(self, app, db_session):
+    def should_connect_venue_to_allocine_provider(self, app):
         # Given
         venue = VenueFactory()
         provider = activate_provider("AllocineStocks")

@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import pytest
-
 from pcapi.core.bookings.factories import BookingFactory
 from pcapi.core.offers.factories import OfferFactory
 from pcapi.core.testing import assert_num_queries
@@ -10,8 +8,6 @@ from pcapi.notifications.push.user_attributes_updates import BATCH_DATETIME_FORM
 from pcapi.notifications.push.user_attributes_updates import TRACKED_PRODUCT_IDS
 from pcapi.notifications.push.user_attributes_updates import get_user_attributes
 
-
-pytestmark = pytest.mark.usefixtures("db_session")
 
 MAX_BATCH_PARAMETER_SIZE = 30
 

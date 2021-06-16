@@ -1,13 +1,8 @@
-import pytest
-
 from pcapi.core import search
 import pcapi.core.bookings.api as bookings_api
 import pcapi.core.offers.factories as offers_factories
 import pcapi.core.search.testing as search_testing
 import pcapi.core.users.factories as users_factories
-
-
-pytestmark = pytest.mark.usefixtures("db_session")
 
 
 def test_offer_indexation_on_booking_cycle(app):

@@ -60,7 +60,6 @@ import tests
 IMAGES_DIR = pathlib.Path(tests.__path__[0]) / "files"
 
 
-@pytest.mark.usefixtures("db_session")
 class UpsertStocksTest:
     @mock.patch("pcapi.core.search.async_index_offer_ids")
     def test_upsert_multiple_stocks(self, mocked_async_index_offer_ids):
@@ -528,7 +527,6 @@ class UpsertStocksTest:
         assert not mocked_offer_creation_notification_to_admin.called
 
 
-@pytest.mark.usefixtures("db_session")
 class DeleteStockTest:
     @mock.patch("pcapi.core.search.async_index_offer_ids")
     def test_delete_stock_basics(self, mocked_async_index_offer_ids):
@@ -620,7 +618,6 @@ class DeleteStockTest:
         assert not stock.isSoftDeleted
 
 
-@pytest.mark.usefixtures("db_session")
 class CreateMediationV2Test:
     THUMBS_DIR = (
         pathlib.Path(tests.__path__[0])
@@ -698,7 +695,6 @@ class CreateMediationV2Test:
         assert len(os.listdir(self.THUMBS_DIR)) == existing_number_of_files
 
 
-@pytest.mark.usefixtures("db_session")
 class CreateOfferTest:
     def test_create_offer_from_scratch(self):
         venue = factories.VenueFactory()
@@ -955,7 +951,6 @@ class CreateOfferTest:
         assert error.value.errors["global"] == [err]
 
 
-@pytest.mark.usefixtures("db_session")
 class CreateOfferBusinessLogicChecksTest:
     def test_success_if_physical_product_and_physical_venue(self):
         venue = factories.VenueFactory()
@@ -1024,7 +1019,6 @@ class CreateOfferBusinessLogicChecksTest:
         assert error.value.errors["venue"] == [err]
 
 
-@pytest.mark.usefixtures("db_session")
 class UpdateOfferTest:
     @mock.patch("pcapi.core.search.async_index_offer_ids")
     def test_basics(self, mocked_async_index_offer_ids):
@@ -1161,7 +1155,6 @@ class UpdateOfferTest:
         assert pending_offer.name == "Soliloquy"
 
 
-@pytest.mark.usefixtures("db_session")
 class BatchUpdateOffersTest:
     @mock.patch("pcapi.core.search.async_index_offer_ids")
     def test_activate(self, mocked_async_index_offer_ids):
@@ -1197,7 +1190,6 @@ class BatchUpdateOffersTest:
 
 
 class UpdateOfferAndStockIdAtProvidersTest:
-    @pytest.mark.usefixtures("db_session")
     def test_update_offer_and_stock_id_at_providers(self):
         # Given
         current_siret = "88888888888888"
@@ -1230,7 +1222,6 @@ class OfferExpenseDomainsTest:
         }
 
 
-@pytest.mark.usefixtures("db_session")
 class AddCriterionToOffersTest:
     @mock.patch("pcapi.core.search.async_index_offer_ids")
     def test_add_criteria_from_isbn(self, mocked_async_index_offer_ids):
@@ -1300,7 +1291,6 @@ class AddCriterionToOffersTest:
 
 class DeactivateInappropriateProductTest:
     @mock.patch("pcapi.core.search.async_index_offer_ids")
-    @pytest.mark.usefixtures("db_session")
     def test_should_deactivate_product_with_inappropriate_content(self, mocked_async_index_offer_ids):
         # Given
         product1 = ThingProductFactory(extraData={"isbn": "isbn-de-test"})
@@ -1321,7 +1311,6 @@ class DeactivateInappropriateProductTest:
         mocked_async_index_offer_ids.assert_called_once_with([o.id for o in offers])
 
 
-@pytest.mark.usefixtures("db_session")
 class ComputeOfferValidationTest:
     def test_matching_keyword(self):
         offer = Offer(name="An offer PENDING validation")
@@ -1359,7 +1348,6 @@ class ComputeOfferValidationTest:
         assert set_offer_status_based_on_fraud_criteria(offer) == OfferValidationStatus.PENDING
 
 
-@pytest.mark.usefixtures("db_session")
 class UpdateOfferValidationStatusTest:
     def test_update_pending_offer_validation_status_to_approved(self):
         offer = OfferFactory(validation=OfferValidationStatus.PENDING)
@@ -1396,7 +1384,6 @@ class UpdateOfferValidationStatusTest:
         mocked_async_index_offer_ids.assert_called_once_with([offer.id])
 
 
-@pytest.mark.usefixtures("db_session")
 class ImportOfferValidationConfigTest:
     @override_features(OFFER_VALIDATION_MOCK_COMPUTATION=False)
     def test_raise_a_WrongFormatInFraudConfigurationFile_error_for_key_error(self):
@@ -1506,7 +1493,6 @@ class ImportOfferValidationConfigTest:
         assert current_config.specs["rules"][1]["conditions"][0]["attribute"] == "max_price"
 
 
-@pytest.mark.usefixtures("db_session")
 class ParseOfferValidationConfigTest:
     @override_features(OFFER_VALIDATION_MOCK_COMPUTATION=False)
     def test_parse_offer_validation_config(self):
@@ -1537,7 +1523,6 @@ class ParseOfferValidationConfigTest:
         assert validation_rules[0].offer_validation_items[0].attribute == "withdrawalDetails"
 
 
-@pytest.mark.usefixtures("db_session")
 class ComputeOfferValidationScoreTest:
     @override_features(OFFER_VALIDATION_MOCK_COMPUTATION=False)
     def test_offer_validation_with_one_item_config_with_in(self):
@@ -1753,7 +1738,6 @@ class ComputeOfferValidationScoreTest:
 
 
 class LoadProductByIsbnAndCheckIsGCUCompatibleOrRaiseErrorTest:
-    @pytest.mark.usefixtures("db_session")
     def test_returns_product_if_found_and_is_gcu_compatible(self):
         isbn = "2221001648"
         product = ProductFactory(extraData={"isbn": isbn}, isGcuCompatible=True)
@@ -1762,7 +1746,6 @@ class LoadProductByIsbnAndCheckIsGCUCompatibleOrRaiseErrorTest:
 
         assert result == product
 
-    @pytest.mark.usefixtures("db_session")
     def test_raise_api_error_if_no_product(self):
         ProductFactory(isGcuCompatible=True)
 
@@ -1771,7 +1754,6 @@ class LoadProductByIsbnAndCheckIsGCUCompatibleOrRaiseErrorTest:
 
         assert error.value.errors["isbn"] == ["Ce produit n’est pas éligible au pass Culture."]
 
-    @pytest.mark.usefixtures("db_session")
     def test_raise_api_error_if_product_is_not_gcu_compatible(self):
         isbn = "2221001648"
         ProductFactory(extraData={"isbn": isbn}, isGcuCompatible=False)
@@ -1783,7 +1765,6 @@ class LoadProductByIsbnAndCheckIsGCUCompatibleOrRaiseErrorTest:
 
 
 @freeze_time("2020-01-05 10:00:00")
-@pytest.mark.usefixtures("db_session")
 class UnindexExpiredOffersTest:
     @override_settings(ALGOLIA_DELETING_OFFERS_CHUNK_SIZE=2)
     @mock.patch("pcapi.core.search.unindex_offer_ids")

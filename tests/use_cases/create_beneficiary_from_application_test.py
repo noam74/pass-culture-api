@@ -56,7 +56,6 @@ JOUVE_CONTENT = {
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content", return_value=JOUVE_CONTENT)
 @patch("pcapi.domain.password.random_token")
 @freeze_time("2013-05-15 09:00:00")
-@pytest.mark.usefixtures("db_session")
 def test_saved_a_beneficiary_from_application(stubed_random_token, app):
     # Given
     stubed_random_token.return_value = "token"
@@ -105,7 +104,6 @@ def test_saved_a_beneficiary_from_application(stubed_random_token, app):
 @override_features(FORCE_PHONE_VALIDATION=False)
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content", return_value=JOUVE_CONTENT)
 @freeze_time("2013-05-15 09:00:00")
-@pytest.mark.usefixtures("db_session")
 def test_application_for_native_app_user(app):
     # Given
     users_api.create_account(
@@ -146,7 +144,7 @@ def test_application_for_native_app_user(app):
 @freeze_time("2013-05-15 09:00:00")
 @override_features(FORCE_PHONE_VALIDATION=False)
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
-def test_application_for_native_app_user_with_load_smoothing(_get_raw_content, app, db_session):
+def test_application_for_native_app_user_with_load_smoothing(_get_raw_content, app):
     # Given
     application_id = 35
     user = UserFactory(
@@ -212,7 +210,6 @@ def test_application_for_native_app_user_with_load_smoothing(_get_raw_content, a
 
 @override_features(FORCE_PHONE_VALIDATION=False)
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content", return_value=JOUVE_CONTENT)
-@pytest.mark.usefixtures("db_session")
 def test_cannot_save_beneficiary_if_email_is_already_taken(app):
     # Given
     email = "rennes@example.org"
@@ -236,7 +233,6 @@ def test_cannot_save_beneficiary_if_email_is_already_taken(app):
 
 
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content", return_value=JOUVE_CONTENT)
-@pytest.mark.usefixtures("db_session")
 def test_cannot_save_beneficiary_if_duplicate(app):
     # Given
     first_name = "Thomas"
@@ -261,7 +257,6 @@ def test_cannot_save_beneficiary_if_duplicate(app):
     assert beneficiary_import.detail == f"User with id {existing_user_id} is a duplicate."
 
 
-@pytest.mark.usefixtures("db_session")
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
 @override_features(WHOLE_FRANCE_OPENING=False)
 def test_cannot_save_beneficiary_if_department_is_not_eligible_legacy_behaviour(get_application_content, app):
@@ -283,7 +278,6 @@ def test_cannot_save_beneficiary_if_department_is_not_eligible_legacy_behaviour(
     assert beneficiary_import.detail == f"Postal code {postal_code} is not eligible."
 
 
-@pytest.mark.usefixtures("db_session")
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
 @override_features(WHOLE_FRANCE_OPENING=True)
 def test_cannot_save_beneficiary_if_department_is_not_eligible(get_application_content, app):
@@ -307,7 +301,6 @@ def test_cannot_save_beneficiary_if_department_is_not_eligible(get_application_c
 
 @patch("pcapi.use_cases.create_beneficiary_from_application.validate")
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
-@pytest.mark.usefixtures("db_session")
 def test_calls_send_rejection_mail_with_validation_error(_get_raw_content, stubed_validate, app):
     # Given
     error = BeneficiaryIsADuplicate("Some reason")
@@ -352,7 +345,7 @@ BASE_JOUVE_CONTENT = {
 #     [{"serviceCodeCtrl": "KO"}, {"posteCodeCtrl": "KO"}, {"birthLocationCtrl": "KO"}],
 # )
 # @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
-# @pytest.mark.usefixtures("db_session")
+#
 # def test_cannot_save_beneficiary_when_fraud_is_detected(
 #     mocked_get_content,
 #     fraud_strict_detection_parameter,
@@ -378,7 +371,6 @@ BASE_JOUVE_CONTENT = {
 
 
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
-@pytest.mark.usefixtures("db_session")
 def test_doesnt_save_beneficiary_when_suspicious(
     mocked_get_content,
     app,
@@ -397,7 +389,6 @@ def test_doesnt_save_beneficiary_when_suspicious(
 
 
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
-@pytest.mark.usefixtures("db_session")
 def test_id_piece_number_no_duplicate(
     mocked_get_content,
     app,
@@ -427,7 +418,6 @@ def test_id_piece_number_no_duplicate(
 
 
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
-@pytest.mark.usefixtures("db_session")
 def test_id_piece_number_duplicate(
     mocked_get_content,
     app,
@@ -455,7 +445,6 @@ def test_id_piece_number_duplicate(
 
 
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
-@pytest.mark.usefixtures("db_session")
 def test_id_piece_number_invalid_format_avoid_duplicate(
     mocked_get_content,
     app,
@@ -483,7 +472,6 @@ def test_id_piece_number_invalid_format_avoid_duplicate(
 
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
 @pytest.mark.parametrize("wrong_piece_number", ["NOT_APPLICABLE", "KO", ""])
-@pytest.mark.usefixtures("db_session")
 def test_id_piece_number_invalid(mocked_get_content, wrong_piece_number):
     subscribing_user = UserFactory(
         isBeneficiary=False,
@@ -506,7 +494,6 @@ def test_id_piece_number_invalid(mocked_get_content, wrong_piece_number):
 
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
 @pytest.mark.parametrize("wrong_piece_number", ["NOT_APPLICABLE", "KO", ""])
-@pytest.mark.usefixtures("db_session")
 def test_id_piece_number_wrong_return_control(mocked_get_content, wrong_piece_number):
     subscribing_user = UserFactory(
         isBeneficiary=False,
@@ -536,7 +523,6 @@ def test_id_piece_number_wrong_return_control(mocked_get_content, wrong_piece_nu
         "",
     ],
 )
-@pytest.mark.usefixtures("db_session")
 def test_id_piece_number_wrong_format(mocked_get_content, id_piece_number):
     subscribing_user = UserFactory(
         isBeneficiary=False,
@@ -558,7 +544,6 @@ def test_id_piece_number_wrong_format(mocked_get_content, id_piece_number):
 
 
 @patch("pcapi.connectors.beneficiaries.jouve_backend._get_raw_content")
-@pytest.mark.usefixtures("db_session")
 def test_id_piece_number_by_pass(
     mocked_get_content,
     app,

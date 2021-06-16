@@ -1,5 +1,3 @@
-import pytest
-
 from pcapi.core.offers.factories import OfferFactory
 from pcapi.models import Offer
 from pcapi.repository import repository
@@ -7,7 +5,6 @@ from pcapi.scripts.bulk_inactivate_offers import bulk_inactivate_offers
 
 
 class BulkMarkIncompatibleViaOfferIdsTest:
-    @pytest.mark.usefixtures("db_session")
     def test_should_mark_offers_and_products_as_incompatible_via_offer_ids(self):
         # Given
         offer = OfferFactory(id=1)

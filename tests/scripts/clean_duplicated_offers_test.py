@@ -1,5 +1,3 @@
-import pytest
-
 from pcapi.core.offerers.factories import VenueFactory
 from pcapi.core.offers.factories import OfferFactory
 from pcapi.scripts.clean_duplicated_offers import count_duplicate_offers
@@ -25,7 +23,6 @@ class VenueOffersWrapper:
         ]
 
 
-@pytest.mark.usefixtures("db_session")
 def test_get_venue_ids_with_duplicates(app):
     venues_with_duplicates = [
         VenueOffersWrapper(nb_duplicates=1, nb_regulars=0),
@@ -38,7 +35,6 @@ def test_get_venue_ids_with_duplicates(app):
     assert venue_ids == {wrapper.venue.id for wrapper in venues_with_duplicates}
 
 
-@pytest.mark.usefixtures("db_session")
 def test_count_duplicates(app):
     VenueOffersWrapper(nb_duplicates=3, nb_regulars=1)
     VenueOffersWrapper(nb_duplicates=0, nb_regulars=2)
@@ -46,7 +42,6 @@ def test_count_duplicates(app):
     assert count_duplicate_offers() == 3
 
 
-@pytest.mark.usefixtures("db_session")
 def test_handle_offer_duplicates(app, tmp_path):
     """
     Test that the expected duplicated rows have been updated (and no more)

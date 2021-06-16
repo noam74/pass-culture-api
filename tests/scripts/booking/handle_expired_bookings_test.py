@@ -14,7 +14,6 @@ from pcapi.repository import repository
 from pcapi.scripts.booking import handle_expired_bookings
 
 
-@pytest.mark.usefixtures("db_session")
 class CancelExpiredBookingsTest:
     def should_cancel_old_thing_that_can_expire_booking(self, app) -> None:
         now = datetime.utcnow()
@@ -133,7 +132,6 @@ class CancelExpiredBookingsTest:
             handle_expired_bookings.cancel_expired_bookings(batch_size=3)
 
 
-@pytest.mark.usefixtures("db_session")
 class NotifyUsersOfExpiredBookingsTest:
     @mock.patch("pcapi.scripts.booking.handle_expired_bookings.send_expired_bookings_recap_email_to_beneficiary")
     def should_notify_of_todays_expired_bookings(self, mocked_send_email_recap, app) -> None:
@@ -178,7 +176,6 @@ class NotifyUsersOfExpiredBookingsTest:
         )
 
 
-@pytest.mark.usefixtures("db_session")
 class NotifyOfferersOfExpiredBookingsTest:
     @mock.patch("pcapi.scripts.booking.handle_expired_bookings.send_expired_bookings_recap_email_to_offerer")
     def should_notify_of_todays_expired_bookings(self, mocked_send_email_recap, app) -> None:

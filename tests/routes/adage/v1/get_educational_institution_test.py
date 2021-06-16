@@ -1,5 +1,3 @@
-import pytest
-
 from pcapi import settings
 from pcapi.core.bookings.factories import EducationalBookingFactory
 from pcapi.core.educational.factories import EducationalDepositFactory
@@ -12,7 +10,6 @@ from pcapi.utils.human_ids import humanize
 from tests.conftest import TestClient
 
 
-@pytest.mark.usefixtures("db_session")
 class Returns200Test:
     def test_get_educational_institution(self, app) -> None:
         redactor = UserFactory(civility="M.")

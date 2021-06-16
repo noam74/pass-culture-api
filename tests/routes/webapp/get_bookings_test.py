@@ -1,7 +1,5 @@
 from unittest.mock import patch
 
-import pytest
-
 from pcapi.core.bookings.factories import BookingFactory
 from pcapi.core.offers.factories import ThingOfferFactory
 from pcapi.core.offers.factories import ThingStockFactory
@@ -15,7 +13,6 @@ from tests.conftest import TestClient
 
 class Returns200Test:
     @patch("pcapi.routes.webapp.bookings.FeatureToggle.is_active", return_value=False)
-    @pytest.mark.usefixtures("db_session")
     def test_when_user_has_bookings_and_qr_code_feature_is_inactive_does_not_return_qr_code(
         self, qr_code_is_active, app
     ):
@@ -125,7 +122,6 @@ class Returns200Test:
         }
 
     @patch("pcapi.routes.webapp.bookings.FeatureToggle.is_active", return_value=True)
-    @pytest.mark.usefixtures("db_session")
     def when_user_has_bookings_and_qr_code_feature_is_active(self, qr_code_is_active, app):
         # Given
         user1 = UserFactory(email="user1+plus@example.com")

@@ -10,7 +10,6 @@ from pcapi.utils.token import random_token
 
 
 class EditVenueTest:
-    @pytest.mark.usefixtures("db_session")
     @patch("pcapi.core.search.async_index_venue_ids")
     def when_changes_on_name_algolia_indexing_is_triggered(self, mocked_async_index_venue_ids):
         # Given
@@ -27,7 +26,6 @@ class EditVenueTest:
         # Then
         mocked_async_index_venue_ids.assert_called_once_with([venue.id])
 
-    @pytest.mark.usefixtures("db_session")
     @patch("pcapi.core.search.async_index_venue_ids")
     def when_changes_on_public_name_algolia_indexing_is_triggered(self, mocked_async_index_venue_ids):
         # Given
@@ -44,7 +42,6 @@ class EditVenueTest:
         # Then
         mocked_async_index_venue_ids.called_once_with([venue.id])
 
-    @pytest.mark.usefixtures("db_session")
     @patch("pcapi.core.search.async_index_venue_ids")
     def when_changes_on_city_algolia_indexing_is_triggered(self, mocked_async_index_venue_ids):
         # Given
@@ -61,7 +58,6 @@ class EditVenueTest:
         # Then
         mocked_async_index_venue_ids.assert_called_once_with([venue.id])
 
-    @pytest.mark.usefixtures("db_session")
     @patch("pcapi.core.search.async_index_venue_ids")
     def when_changes_are_not_on_algolia_fields_it_should_not_trigger_indexing(self, mocked_async_index_venue_ids):
         # Given
@@ -79,7 +75,6 @@ class EditVenueTest:
         # Then
         mocked_async_index_venue_ids.assert_not_called()
 
-    @pytest.mark.usefixtures("db_session")
     @patch("pcapi.core.search.async_index_venue_ids")
     def when_changes_in_payload_are_same_as_previous_it_should_not_trigger_indexing(self, mocked_async_index_venue_ids):
         # Given
@@ -96,7 +91,6 @@ class EditVenueTest:
         # Then
         mocked_async_index_venue_ids.assert_not_called()
 
-    @pytest.mark.usefixtures("db_session")
     def test_empty_siret_is_editable(self, app) -> None:
         # Given
         venue = offers_factories.VenueFactory(
@@ -114,7 +108,6 @@ class EditVenueTest:
         # Then
         assert updated_venue.siret == venue_data["siret"]
 
-    @pytest.mark.usefixtures("db_session")
     def test_existing_siret_is_not_editable(self, app) -> None:
         # Given
         venue = offers_factories.VenueFactory()
@@ -129,7 +122,6 @@ class EditVenueTest:
         # Then
         assert error.value.errors["siret"] == ["Vous ne pouvez pas modifier le siret d'un lieu"]
 
-    @pytest.mark.usefixtures("db_session")
     def test_latitude_and_longitude_wrong_format(self, app) -> None:
         # given
         venue = offers_factories.VenueFactory(
@@ -149,7 +141,6 @@ class EditVenueTest:
         assert error.value.errors["longitude"] == ["Format incorrect"]
 
 
-@pytest.mark.usefixtures("db_session")
 class ApiKeyTest:
     def test_generate_and_save_api_key(self):
         offerer = offers_factories.OffererFactory()

@@ -3,7 +3,6 @@ import secrets
 from unittest.mock import patch
 
 from freezegun import freeze_time
-import pytest
 
 from pcapi.core.offerers.models import Offerer
 from pcapi.model_creators.generic_creators import create_offerer
@@ -16,7 +15,6 @@ from tests.conftest import TestClient
 
 
 class Returns202Test:
-    @pytest.mark.usefixtures("db_session")
     def expect_offerer_to_be_validated(self, app):
         with freeze_time("2021-06-22 14:48:00") as frozen_time:
             # Given
@@ -39,7 +37,6 @@ class Returns202Test:
         assert offerer.dateValidated == datetime(2021, 6, 23, 11)
 
     @patch("pcapi.core.search.async_index_venue_ids")
-    @pytest.mark.usefixtures("db_session")
     def expect_offerer_managed_venues_to_be_reindexed(self, mocked_async_index_venue_ids, app):
         # Given
         offerer_token = secrets.token_urlsafe(20)
@@ -63,7 +60,6 @@ class Returns202Test:
 
 
 class Returns404Test:
-    @pytest.mark.usefixtures("db_session")
     def expect_offerer_not_to_be_validated_with_unknown_token(self, app):
         # When
         response = TestClient(app.test_client()).with_auth(email="pro@example.com").get("/validate/offerer/123")

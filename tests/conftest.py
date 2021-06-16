@@ -163,6 +163,11 @@ def client_fixture(app: Flask):
     return TestClient(app.test_client())
 
 
+@pytest.fixture(autouse=True)
+def enable_transactional_tests(db_session):
+    pass
+
+
 class TestClient:
     WITH_DOC = False
     USER_TEST_ADMIN_EMAIL = "pctest.admin93.0@example.com"

@@ -1,6 +1,5 @@
 import dataclasses
 
-import pytest
 import requests_mock
 
 import pcapi.core.offers.factories as offers_factories
@@ -129,7 +128,6 @@ def test_check_offer_is_indexed(app):
     assert backend.check_offer_is_indexed("whatever")
 
 
-@pytest.mark.usefixtures("db_session")
 def test_index_offers(app):
     backend = get_backend()
     offer = offers_factories.StockFactory().offer

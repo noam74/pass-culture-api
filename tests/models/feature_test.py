@@ -1,5 +1,4 @@
 import flask
-import pytest
 
 from pcapi.core.testing import assert_num_queries
 from pcapi.models.feature import Feature
@@ -7,7 +6,6 @@ from pcapi.models.feature import FeatureToggle
 from pcapi.repository import repository
 
 
-@pytest.mark.usefixtures("db_session")
 class FeatureToggleTest:
     def test_is_active_returns_true_when_feature_is_active(self):
         # Given

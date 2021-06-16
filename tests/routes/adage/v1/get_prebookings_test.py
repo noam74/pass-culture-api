@@ -1,5 +1,3 @@
-import pytest
-
 from pcapi import settings
 from pcapi.core.bookings.factories import EducationalBookingFactory
 from pcapi.core.educational.factories import EducationalInstitutionFactory
@@ -11,7 +9,6 @@ from pcapi.utils.human_ids import humanize
 from tests.conftest import TestClient
 
 
-@pytest.mark.usefixtures("db_session")
 class Returns200Test:
     def test_get_prebookings_without_query_params(self, app) -> None:
         redactor = UserFactory(civility="M.")

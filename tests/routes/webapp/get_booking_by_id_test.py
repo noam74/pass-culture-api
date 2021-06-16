@@ -1,5 +1,3 @@
-import pytest
-
 from pcapi.core.bookings.factories import BookingFactory
 from pcapi.core.offers.factories import OffererFactory
 from pcapi.core.offers.factories import ThingOfferFactory
@@ -13,7 +11,6 @@ from tests.conftest import TestClient
 
 
 class Returns200Test:
-    @pytest.mark.usefixtures("db_session")
     def test_expect_booking_to_have_completed_url(self, app):
         # Given
         user = UserFactory(email="user@example.com")

@@ -12,7 +12,6 @@ import pcapi.core.users.models as users_models
 from pcapi.flask_app import db
 
 
-@pytest.mark.usefixtures("db_session")
 class JouveFraudCheckTest:
     application_id = 35
     user_email = "tour.de.passpass@example.com"
@@ -218,7 +217,6 @@ class JouveFraudCheckTest:
     #     assert not user.isBeneficiary
 
 
-@pytest.mark.usefixtures("db_session")
 class CommonTest:
     def test_validator_data(self):
         user = users_factories.UserFactory()
@@ -231,7 +229,6 @@ class CommonTest:
         assert expected == fraud_models.JouveContent(**fraud_data.resultContent)
 
 
-@pytest.mark.usefixtures("db_session")
 class UpsertSuspiciousFraudResultTest:
     def test_do_not_repeat_previous_reason_and_keep_history(self):
         """
@@ -255,7 +252,6 @@ class UpsertSuspiciousFraudResultTest:
         assert result.reason == f"{first_reason} ; {second_reason} ; {first_reason}"
 
 
-@pytest.mark.usefixtures("db_session")
 class CommonFraudCheckTest:
     def test_duplicate_id_piece_number_ok(self):
         fraud_item = fraud_api._duplicate_id_piece_number_fraud_item("random_id")
@@ -334,7 +330,6 @@ class CommonFraudCheckTest:
         assert fraud_result.status == fraud_models.FraudStatus.OK
 
 
-@pytest.mark.usefixtures("db_session")
 class DMSFraudCheckTest:
     def test_dms_fraud_check(self):
         user = users_factories.UserFactory(isBeneficiary=False)

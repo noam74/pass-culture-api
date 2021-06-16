@@ -3,7 +3,6 @@ from datetime import timedelta
 from unittest.mock import patch
 
 from dateutil.relativedelta import relativedelta
-import pytest
 
 from pcapi.core.bookings.factories import BookingFactory
 import pcapi.core.mails.testing as mails_testing
@@ -63,7 +62,6 @@ from tests.domain_creators.generic_creators import create_domain_beneficiary_pre
 # - ... and that's all.
 
 
-@pytest.mark.usefixtures("db_session")
 class SendBeneficiaryBookingCancellationEmailTest:
     @patch(
         "pcapi.domain.user_emails.make_beneficiary_booking_cancellation_email_data",
@@ -84,7 +82,6 @@ class SendBeneficiaryBookingCancellationEmailTest:
         assert mails_testing.outbox[0].sent_data["Mj-TemplateID"] == 1091464
 
 
-@pytest.mark.usefixtures("db_session")
 class SendOffererDrivenCancellationEmailToOffererTest:
     @patch(
         "pcapi.domain.user_emails.make_offerer_driven_cancellation_email_for_offerer", return_value={"Html-part": ""}
@@ -109,7 +106,6 @@ class SendOffererDrivenCancellationEmailToOffererTest:
         assert mails_testing.outbox[0].sent_data["To"] == "offer@example.com"
 
 
-@pytest.mark.usefixtures("db_session")
 class SendBeneficiaryUserDrivenCancellationEmailToOffererTest:
     def test_should_send_booking_cancellation_email_to_offerer(self):
         # Given
@@ -123,7 +119,6 @@ class SendBeneficiaryUserDrivenCancellationEmailToOffererTest:
         assert mails_testing.outbox[0].sent_data["MJ-TemplateID"] == 780015
 
 
-@pytest.mark.usefixtures("db_session")
 class SendWarningToBeneficiaryAfterProBookingCancellationTest:
     def test_should_sends_email_to_beneficiary_when_pro_cancels_booking(self):
         # Given
@@ -156,7 +151,6 @@ class SendWarningToBeneficiaryAfterProBookingCancellationTest:
         }
 
 
-@pytest.mark.usefixtures("db_session")
 class SendBookingConfirmationEmailToBeneficiaryTest:
     @patch(
         "pcapi.domain.user_emails.retrieve_data_for_beneficiary_booking_confirmation_email",
@@ -175,7 +169,6 @@ class SendBookingConfirmationEmailToBeneficiaryTest:
         assert mails_testing.outbox[0].sent_data["MJ-TemplateID"] == 2942751
 
 
-@pytest.mark.usefixtures("db_session")
 class SendBookingConfirmationEmailToOffererTest:
     def test_send_to_offerer(self):
         booking = BookingFactory(
@@ -188,7 +181,6 @@ class SendBookingConfirmationEmailToOffererTest:
         assert mails_testing.outbox[0].sent_data["MJ-TemplateID"] == 2843165
 
 
-@pytest.mark.usefixtures("db_session")
 class SendValidationConfirmationEmailTest:
     @patch(
         "pcapi.domain.user_emails.retrieve_data_for_new_offerer_validation_email",
@@ -208,7 +200,6 @@ class SendValidationConfirmationEmailTest:
         assert mails_testing.outbox[0].sent_data["Mj-TemplateID"] == 778723
 
 
-@pytest.mark.usefixtures("db_session")
 class SendOffererBookingsRecapEmailAfterOffererCancellationTest:
     @patch(
         "pcapi.domain.user_emails.retrieve_offerer_bookings_recap_email_data_after_offerer_cancellation",
@@ -228,7 +219,6 @@ class SendOffererBookingsRecapEmailAfterOffererCancellationTest:
         assert mails_testing.outbox[0].sent_data["Mj-TemplateID"] == 1116333
 
 
-@pytest.mark.usefixtures("db_session")
 class SendProUserValidationEmailTest:
     def test_sends_email_to_pro_user(self):
         # Given
@@ -242,7 +232,6 @@ class SendProUserValidationEmailTest:
         assert mails_testing.outbox[0].sent_data["To"] == user.email
 
 
-@pytest.mark.usefixtures("db_session")
 class SendAdminUserValidationEmailTest:
     def test_send_mail_to_admin_user(self):
         # Given
@@ -256,7 +245,6 @@ class SendAdminUserValidationEmailTest:
         assert mails_testing.outbox[0].sent_data["To"] == user.email
 
 
-@pytest.mark.usefixtures("db_session")
 class SendActivationEmailTest:
     @patch("pcapi.emails.beneficiary_activation.get_activation_email_data")
     def test_send_activation_email(self, mocked_get_activation_email_data):
@@ -285,7 +273,6 @@ class SendActivationEmailTest:
         assert token.value in native_app_link
 
 
-@pytest.mark.usefixtures("db_session")
 class SendActivationEmailToRedactorTest:
     def test_send_activation_email_to_redactor_native_app(self):
         # given
@@ -303,7 +290,6 @@ class SendActivationEmailToRedactorTest:
 
 class SendAttachmentValidationEmailToProOffererTest:
     @patch("pcapi.domain.user_emails.retrieve_data_for_offerer_attachment_validation_email")
-    @pytest.mark.usefixtures("db_session")
     def test_send_attachment_validation_email_to_pro_offerer(
         self, mocked_retrieve_data_for_offerer_attachment_validation_email, app
     ):
@@ -319,7 +305,6 @@ class SendAttachmentValidationEmailToProOffererTest:
         assert mails_testing.outbox[0].sent_data["Html-part"] == ""
 
 
-@pytest.mark.usefixtures("db_session")
 class SendResetPasswordProEmailTest:
     @patch(
         "pcapi.domain.user_emails.retrieve_data_for_reset_password_pro_email", return_value={"MJ-TemplateID": 779295}
@@ -338,7 +323,6 @@ class SendResetPasswordProEmailTest:
         assert mails_testing.outbox[0].sent_data["MJ-TemplateID"] == 779295
 
 
-@pytest.mark.usefixtures("db_session")
 class SendResetPasswordUserEmailTest:
     @patch(
         "pcapi.domain.user_emails.retrieve_data_for_reset_password_user_email", return_value={"MJ-TemplateID": 912168}
@@ -374,7 +358,6 @@ class SendResetPasswordUserEmailTest:
         assert mails_testing.outbox[0].sent_data["MJ-TemplateID"] == 12345
 
 
-@pytest.mark.usefixtures("db_session")
 class SendRejectionEmailToBeneficiaryPreSubscriptionTest:
     @patch(
         "pcapi.domain.user_emails.make_duplicate_beneficiary_pre_subscription_rejected_data",
@@ -409,9 +392,7 @@ class SendRejectionEmailToBeneficiaryPreSubscriptionTest:
         assert mails_testing.outbox[0].sent_data["MJ-TemplateID"] == 1619528
 
 
-@pytest.mark.usefixtures("db_session")
 class SendExpiredBookingsRecapEmailToBeneficiaryTest:
-    @pytest.mark.usefixtures("db_session")
     def test_should_send_email_to_beneficiary_when_expired_bookings_cancelled(self, app):
         amnesiac_user = users_factories.UserFactory(email="dory@example.com")
         expired_today_dvd_booking = BookingFactory(
@@ -427,9 +408,7 @@ class SendExpiredBookingsRecapEmailToBeneficiaryTest:
         assert mails_testing.outbox[0].sent_data["Mj-TemplateID"] == 1951103
 
 
-@pytest.mark.usefixtures("db_session")
 class SendExpiredBookingsRecapEmailToOffererTest:
-    @pytest.mark.usefixtures("db_session")
     def test_should_send_email_to_offerer_when_expired_bookings_cancelled(self, app):
         offerer = OffererFactory()
         expired_today_dvd_booking = BookingFactory(stock__offer__bookingEmail="offerer.booking@example.com")
@@ -440,7 +419,6 @@ class SendExpiredBookingsRecapEmailToOffererTest:
         assert mails_testing.outbox[0].sent_data["Mj-TemplateID"] == 1952508
 
 
-@pytest.mark.usefixtures("db_session")
 class SendSoonToBeExpiredBookingsRecapEmailToBeneficiaryTest:
     @patch(
         "pcapi.domain.user_emails.build_soon_to_be_expired_bookings_recap_email_data_for_beneficiary",
@@ -484,7 +462,6 @@ class SendSoonToBeExpiredBookingsRecapEmailToBeneficiaryTest:
         assert mails_testing.outbox[0].sent_data["MJ-TemplateID"] == 12345
 
 
-@pytest.mark.usefixtures("db_session")
 class SendNewlyEligibleUserEmailTest:
     @override_features(APPLY_BOOKING_LIMITS_V2=False)
     def test_send_activation_email_before_opening(self):
@@ -526,7 +503,6 @@ class SendNewlyEligibleUserEmailTest:
         assert mails_testing.outbox[0].sent_data["Vars"]["depositAmount"] == 300
 
 
-@pytest.mark.usefixtures("db_session")
 class SendOfferValidationTest:
     def test_send_offer_approval_email(
         self,
@@ -563,7 +539,6 @@ class SendOfferValidationTest:
         assert humanize(offer.id) in mails_testing.outbox[0].sent_data["Vars"]["pc_pro_offer_link"]
 
 
-@pytest.mark.usefixtures("db_session")
 class SendWithdrawalTermsToNewlyValidatedOffererTest:
     @patch(
         "pcapi.domain.user_emails.retrieve_data_for_new_offerer_validated_withdrawal_terms_email",

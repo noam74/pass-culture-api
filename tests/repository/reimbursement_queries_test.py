@@ -1,8 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
 
-import pytest
-
 from pcapi.core.bookings import factories as bookings_factories
 from pcapi.core.offers import factories as offers_factories
 from pcapi.core.payments import factories as payments_factories
@@ -12,7 +10,6 @@ from pcapi.repository.reimbursement_queries import find_all_offerer_payments
 
 
 class FindAllOffererPaymentsTest:
-    @pytest.mark.usefixtures("db_session")
     def test_should_return_one_payment_info_with_error_status(self, app):
         # Given
         stock = offers_factories.ThingStockFactory(price=10)
@@ -50,7 +47,6 @@ class FindAllOffererPaymentsTest:
             "Iban non fourni",
         )
 
-    @pytest.mark.usefixtures("db_session")
     def test_should_return_one_payment_info_with_sent_status(self, app):
         # Given
         user = users_factories.UserFactory(lastName="User", firstName="Plus")
@@ -103,7 +99,6 @@ class FindAllOffererPaymentsTest:
             "All good",
         )
 
-    @pytest.mark.usefixtures("db_session")
     def test_should_return_last_matching_status_based_on_date_for_each_payment(self, app):
         # Given
         user = users_factories.UserFactory(lastName="User", firstName="Plus")

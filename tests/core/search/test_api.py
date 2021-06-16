@@ -1,14 +1,9 @@
 from unittest import mock
 
-import pytest
-
 from pcapi.core import search
 import pcapi.core.offers.factories as offers_factories
 import pcapi.core.search.testing as search_testing
 from pcapi.core.testing import override_settings
-
-
-pytestmark = pytest.mark.usefixtures("db_session")
 
 
 def make_bookable_offer():

@@ -49,9 +49,6 @@ from tests.connectors import user_profiling_fixtures
 from .utils import create_user_and_test_client
 
 
-pytestmark = pytest.mark.usefixtures("db_session")
-
-
 class AccountTest:
     identifier = "email@example.com"
 
@@ -431,7 +428,6 @@ class AccountCreationTest:
         assert push_testing.requests == []
 
 
-@pytest.mark.usefixtures("db_session")
 class InstitutionalProjectRedactorAccountCreationTest:
     @patch("pcapi.core.users.api.get_institutional_project_redactor_by_email")
     def test_account_creation(self, get_institutional_project_redactor_by_email_stub, app):

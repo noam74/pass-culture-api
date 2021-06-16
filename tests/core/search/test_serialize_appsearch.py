@@ -12,9 +12,6 @@ from pcapi.core.testing import assert_num_queries
 from pcapi.utils.human_ids import humanize
 
 
-pytestmark = pytest.mark.usefixtures("db_session")
-
-
 def test_serialize():
     offer = offers_factories.OfferFactory(
         name="Titre formidable",

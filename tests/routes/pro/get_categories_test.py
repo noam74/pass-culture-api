@@ -1,10 +1,7 @@
-import pytest
-
 import pcapi.core.users.factories as users_factories
 
 
 class Returns200Test:
-    @pytest.mark.usefixtures("db_session")
     def test_get_categories(self, app, client):
         # Given
         user = users_factories.UserFactory()

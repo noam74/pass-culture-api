@@ -49,7 +49,6 @@ class IsImportStatusChangeAllowedTest:
         assert is_import_status_change_allowed(ImportStatus.RETRY, new_status) is False
 
 
-@pytest.mark.usefixtures("db_session")
 class CreateBeneficiaryFromApplicationTest:
     def test_return_newly_created_user(self):
         # given

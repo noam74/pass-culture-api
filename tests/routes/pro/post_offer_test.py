@@ -1,5 +1,3 @@
-import pytest
-
 from pcapi.core.categories import subcategories
 import pcapi.core.offers.factories as offers_factories
 import pcapi.core.users.factories as users_factories
@@ -12,7 +10,6 @@ from pcapi.utils.human_ids import humanize
 from tests.conftest import TestClient
 
 
-@pytest.mark.usefixtures("db_session")
 class Returns200Test:
     def test_create_event_offer(self, app):
         # Given
@@ -99,7 +96,6 @@ class Returns200Test:
         assert offer.mentalDisabilityCompliant == False
 
 
-@pytest.mark.usefixtures("db_session")
 class Returns400Test:
     def test_fail_if_venue_is_not_found(self, app):
         # Given
@@ -271,7 +267,6 @@ class Returns400Test:
         assert response.json["externalTicketOfficeUrl"] == ['L\'URL doit terminer par une extension (ex. ".fr")']
 
 
-@pytest.mark.usefixtures("db_session")
 class Returns403Test:
     def when_user_is_not_attached_to_offerer(self, app):
         # Given
