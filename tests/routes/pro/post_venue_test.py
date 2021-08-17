@@ -1,14 +1,25 @@
+import io
+import pathlib
+import tempfile
+from unittest.mock import patch
+
 import pytest
 
+from pcapi import settings
 import pcapi.core.offerers.factories as offerers_factories
 import pcapi.core.offers.factories as offers_factories
+from pcapi.core.testing import override_settings
 from pcapi.core.users.factories import ProFactory
 from pcapi.models import Venue
 from pcapi.repository import repository
 from pcapi.utils.human_ids import dehumanize
 from pcapi.utils.human_ids import humanize
 
+import tests
 from tests.conftest import TestClient
+
+
+IMAGES_DIR = pathlib.Path(tests.__path__[0]) / "files"
 
 
 @pytest.mark.usefixtures("db_session")
@@ -171,3 +182,41 @@ def test_should_return_403_when_user_is_not_managing_offerer_create_venue(app):
 
     assert response.status_code == 403
     assert response.json["global"] == ["Vous n'avez pas les droits d'accès suffisant pour accéder à cette information."]
+
+
+@pytest.mark.usefixtures("db_session")
+class VenueBannerTest:
+    @patch("pcapi.core.object_storage.backends.local.LocalBackend.local_dir")
+    def test_upload_image(self, mock_local_dir, app, client):
+        """
+        Check that the image upload works for a legit file (size and type):
+            * API returns a 204 status code
+            * the file has been saved to disk
+            * venue's banner information have been updated
+        """
+        user_offerer = offers_factories.UserOffererFactory()
+        venue = offers_factories.VenueFactory(managingOfferer=user_offerer.offerer)
+
+        image_content = (IMAGES_DIR / "mouette_landscape.jpg").read_bytes()
+        file = {"banner": (io.BytesIO(image_content), "jerome_le_banner.jpg")}
+
+        client = client.with_auth(email=user_offerer.user.email)
+        url = f"/venues/{humanize(venue.id)}/banner"
+
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            with override_settings(OBJECT_STORAGE_URL=tmpdirname):
+                settings.OBJECT_STORAGE_URL = tmpdirname
+                mock_local_dir.return_value = pathlib.Path(tmpdirname) / settings.VENUE_BANNER_BUCKET_NAME
+
+                response = client.post(url, files=file)
+                assert response.status_code == 204
+
+                venue = Venue.query.get(venue.id)
+                with open(venue.bannerUrl, mode="rb") as f:
+                    assert f.read() == image_content
+
+                assert venue.bannerMeta == {
+                    "content_type": "jpeg",
+                    "file_name": "jerome_le_banner.jpg",
+                    "author_id": user_offerer.user.id,
+                }

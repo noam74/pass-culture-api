@@ -1,3 +1,4 @@
+from contextlib import suppress
 from datetime import datetime
 from decimal import Decimal
 from decimal import InvalidOperation
@@ -6,9 +7,11 @@ from typing import Optional
 from typing import Union
 
 import pydantic
+import flask
 from pydantic import BaseModel
 from pydantic import validator
 
+from pcapi.core.offerers.validation import VENUE_BANNER_MAX_SIZE
 from pcapi.serialization.utils import dehumanize_field
 from pcapi.serialization.utils import humanize_field
 from pcapi.serialization.utils import string_to_boolean_field
@@ -236,3 +239,29 @@ class VenueListQueryModel(BaseModel):
     class Config:
         alias_generator = to_camel
         extra = "forbid"
+
+
+FlaskRequest = typing.Type[flask.Request]
+
+
+class VenueBannerModel(BaseModel):
+    request: typing.Any
+
+    @classmethod  # makes pylint happy
+    @validator("request")
+    def validate_request(cls, request: typing.Any) -> typing.Any:
+        """
+        If the request has a content_lenght information, use directly to
+        avoid reading the whole content to check its size. If not, do not
+        consider this a an error: it will be checked later.
+        """
+        try:
+            file = request.files["banner"]
+        except (AttributeError, KeyError):
+            raise ValueError("Image manquante")
+
+        with suppress(TypeError):
+            if file.content_length > VENUE_BANNER_MAX_SIZE:
+                raise ValueError(f"Image trop grande, max: {VENUE_BANNER_MAX_SIZE / 1_000}Ko")
+
+        return request

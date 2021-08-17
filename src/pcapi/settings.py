@@ -230,6 +230,9 @@ DMS_USER_URL = os.environ.get("DEMARCHES_SIMPLIFIEES_USER_URL")
 OBJECT_STORAGE_URL = os.environ.get("OBJECT_STORAGE_URL")
 OBJECT_STORAGE_PROVIDER = os.environ.get("OBJECT_STORAGE_PROVIDER", "")
 
+# VENUE BANNER
+VENUE_BANNER_BUCKET_NAME = os.environ.get("VENUE_BANNER_BUCKET_NAME", "venues")
+
 # SWIFT
 SWIFT_AUTH_URL = os.environ.get("SWIFT_AUTH_URL", "https://auth.cloud.ovh.net/v3/")
 SWIFT_BUCKET_NAME = os.environ.get("OVH_BUCKET_NAME")
