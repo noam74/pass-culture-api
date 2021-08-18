@@ -1,4 +1,3 @@
-from contextlib import suppress
 from datetime import datetime
 from decimal import Decimal
 from decimal import InvalidOperation
@@ -243,7 +242,7 @@ class VenueListQueryModel(BaseModel):
 class VenueBannerModel(BaseModel):
     request: typing.Any
 
-    @classmethod  # makes pylint happy
+    @classmethod
     @validator("request")
     def validate_request(cls, request: typing.Any) -> typing.Any:
         """
@@ -256,8 +255,7 @@ class VenueBannerModel(BaseModel):
         except (AttributeError, KeyError):
             raise ValueError("Image manquante")
 
-        with suppress(TypeError):
-            if file.content_length > VENUE_BANNER_MAX_SIZE:
-                raise ValueError(f"Image trop grande, max: {VENUE_BANNER_MAX_SIZE / 1_000}Ko")
+        if file.content_length and file.content_length > VENUE_BANNER_MAX_SIZE:
+            raise ValueError(f"Image trop grande, max: {VENUE_BANNER_MAX_SIZE / 1_000}Ko")
 
         return request
