@@ -7,7 +7,6 @@ from typing import Optional
 from typing import Union
 
 import pydantic
-import flask
 from pydantic import BaseModel
 from pydantic import validator
 
@@ -239,9 +238,6 @@ class VenueListQueryModel(BaseModel):
     class Config:
         alias_generator = to_camel
         extra = "forbid"
-
-
-FlaskRequest = typing.Type[flask.Request]
 
 
 class VenueBannerModel(BaseModel):
