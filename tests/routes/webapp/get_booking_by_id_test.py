@@ -74,6 +74,8 @@ class Returns200Test:
                     "ageMax": None,
                     "ageMin": None,
                     "audioDisabilityCompliant": None,
+                    "bannerMeta": None,
+                    "bannerUrl": None,
                     "bookingEmail": "booking@example.net",
                     "conditions": None,
                     "dateCreated": format_into_utc_date(offer.dateCreated),
