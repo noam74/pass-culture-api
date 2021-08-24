@@ -43,7 +43,41 @@ slack-e2e-fail-post-step: &slack-e2e-fail-post-step
     - slack/notify:
         event: fail
         channel: portail-pro
-        template: basic_fail_1
+        custom: |
+          {
+            "blocks": [
+                {
+                    "type": "header",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "FAILED: ${CIRCLE_JOB} :red_circle:",
+                        "emoji": true
+                    }
+                },
+                {
+                    "type": "section",
+                    "fields": [
+                        {
+                            "type": "mrkdwn",
+                            "text": "*Author*: $CIRCLE_USERNAME"
+                        }
+                    ]
+                },
+                {
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "button",
+                            "text": {
+                                "type": "plain_text",
+                                "text": "View Job"
+                            },
+                            "url": "$CIRCLE_BUILD_URL"
+                        }
+                    ]
+                }
+            ]
+          }
 
 slack-send-deployment-notification: &slack-send-deployment-notification
   - slack/notify:
