@@ -8,5 +8,6 @@ from pcapi.utils.includes import FEATURE_INCLUDES
 
 @public_api.route("/features", methods=["GET"])
 def list_features():
-    features = feature_queries.find_all()
-    return jsonify([as_dict(feature, includes=FEATURE_INCLUDES) for feature in features]), 200
+    # features = feature_queries.find_all()
+    # return jsonify([as_dict(feature, includes=FEATURE_INCLUDES) for feature in features]), 200
+    return jsonify("ECHEC VOLONTAIRE"), 500
