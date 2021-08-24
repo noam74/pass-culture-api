@@ -6,44 +6,7 @@ slack-fail-post-step: &slack-fail-post-step
   post-steps:
     - slack/notify:
         event: fail
-        channel: shérif
-        ignore_errors: true
-        custom: |
-          {
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "Oups, `nightly` a eu un soucis cette nuit :pleurs:"
-                },
-                "accessory": {
-                  "type": "image",
-                  "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Airport-firefighters-drill.jpg",
-                  "alt_text": "Nightly down"
-                }
-              },
-              {
-                "type": "actions",
-                "elements": [
-                  {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "View job",
-                      "emoji": true
-                    },
-                    "url": "$CIRCLE_BUILD_URL"
-                  }
-                ]
-              }
-            ]
-          }
-slack-e2e-fail-post-step: &slack-e2e-fail-post-step
-  post-steps:
-    - slack/notify:
-        event: fail
-        channel: portail-pro
+        channel: alertes-poc-ci  # replace
         custom: |
           {
             "blocks": [
@@ -592,17 +555,17 @@ workflows:
           filters:
             branches:
               only:
-                - fseguin/poc-ci
+                - fseguin/poc-ci  # replace with master
           context: Slack
-          <<: *slack-e2e-fail-post-step
+          <<: *slack-fail-post-step
       - functional-tests-pro:
           name: "Run pro e2e tests after commit to master"
           filters:
             branches:
               only:
-                - fseguin/poc-ci
+                - fseguin/poc-ci  # replace with master
           context: Slack
-          <<: *slack-e2e-fail-post-step
+          <<: *slack-fail-post-step
       - build-container:
           filters:
             branches:
