@@ -38,6 +38,37 @@ slack-fail-post-step: &slack-fail-post-step
               }
             ]
           }
+slack-e2e-fail-post-step: &slack-e2e-fail-post-step
+  post-steps:
+    - slack/notify:
+        event: fail
+        channel: portail-pro
+        custom: |
+          {
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "**[TEST]Avertissement: les tests e2e viennent d'échouer sur la branche `master` d'api !**"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View job",
+                      "emoji": true
+                    },
+                    "url": "$CIRCLE_BUILD_URL"
+                  }
+                ]
+              }
+            ]
+          }
 
 slack-send-deployment-notification: &slack-send-deployment-notification
   - slack/notify:
@@ -546,6 +577,22 @@ workflows:
           pytest_extra_args: "tests --ignore=tests/core --ignore=tests/routes"
       - quality:
           name: "Run quality checks after commit"
+      - functional-tests-webapp:
+          name: "Run webapp e2e tests after commit to master"
+          filters:
+            branches:
+              only:
+                - fseguin/poc-ci
+          context: Slack
+          <<: *slack-e2e-fail-post-step
+      - functional-tests-pro:
+          name: "Run pro e2e tests after commit to master"
+          filters:
+            branches:
+              only:
+                - fseguin/poc-ci
+          context: Slack
+          <<: *slack-e2e-fail-post-step
       - build-container:
           filters:
             branches:
@@ -557,6 +604,8 @@ workflows:
             - "Run routes tests after commit"
             - "Run other tests after commit"
             - "Run quality checks after commit"
+            - "Run webapp e2e tests after commit to master"
+            - "Run pro e2e tests after commit to master"
           filters:
             branches:
               only:
@@ -577,7 +626,7 @@ workflows:
           context:
             - GCP
             - GCP_EHP
-            
+
   nightly:
     triggers:
       - schedule:
