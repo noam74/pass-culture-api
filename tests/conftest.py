@@ -120,6 +120,7 @@ def clear_redis(app):
 @pytest.fixture()
 def clear_tests_assets_bucket():
     try:
+        Path(settings.LOCAL_STORAGE_DIR / "thumbs" / "mediations").mkdir(parents=True, exist_ok=True)
         yield
     finally:
         object_storage_testing.reset_bucket()
