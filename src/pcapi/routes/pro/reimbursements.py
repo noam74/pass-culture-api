@@ -18,8 +18,11 @@ from pcapi.utils.human_ids import dehumanize
 # @debt api-migration
 @private_api.route("/reimbursements/csv", methods=["GET"])
 @login_required
-def get_reimbursements_csv():
-    query = filter_query_where_user_is_user_offerer_and_is_validated(Offerer.query, current_user)
+def get_reimbursements_csv() -> tuple[bytes, int, dict[str, str]]:
+    if current_user.has_admin_role:
+        query = Offerer.query
+    else:
+        query = filter_query_where_user_is_user_offerer_and_is_validated(Offerer.query, current_user)
 
     all_validated_offerers_for_the_current_user = query.all()
 
