@@ -216,14 +216,12 @@ def find_expired_bookings_ordered_by_user(expired_on: date = None) -> Query:
 def find_expired_bookings_ordered_by_offerer(expired_on: date = None) -> Query:
     expired_on = expired_on or date.today()
     return (
-        Booking.query.join(Stock)
-        .join(Offer)
-        .join(Venue)
-        .join(Offerer)
-        .filter(Booking.isCancelled.is_(True))
-        .filter(cast(Booking.cancellationDate, Date) == expired_on)
-        .filter(Booking.cancellationReason == BookingCancellationReasons.EXPIRED)
-        .order_by(Offerer.id)
+        Booking.query.filter(
+            Booking.isCancelled.is_(True),
+            cast(Booking.cancellationDate, Date) == expired_on,
+            Booking.cancellationReason == BookingCancellationReasons.EXPIRED,
+        )
+        .order_by(Booking.offererId)
         .all()
     )
 
@@ -245,10 +243,8 @@ def get_active_bookings_quantity_for_offerer(offerer_id: int) -> dict:
 def get_legacy_active_bookings_quantity_for_venue(venue_id: int) -> int:
     # Stock.dnBookedQuantity cannot be used here because we exclude used/confirmed bookings.
     return (
-        Booking.query.join(Stock)
-        .join(Offer)
-        .filter(
-            venue_id == Offer.venueId,
+        Booking.query.filter(
+            Booking.venueId == venue_id,
             Booking.isUsed.is_(False),
             Booking.isCancelled.is_(False),
             Booking.isConfirmed.is_(False),
@@ -270,10 +266,11 @@ def get_validated_bookings_quantity_for_offerer(offerer_id: int) -> dict:
 
 def get_legacy_validated_bookings_quantity_for_venue(venue_id: int) -> int:
     return (
-        Booking.query.join(Stock)
-        .join(Offer)
-        .filter(Booking.isCancelled.is_(False), venue_id == Offer.venueId)
-        .filter(or_(Booking.isUsed.is_(True), Booking.isConfirmed.is_(True)))
+        Booking.query.filter(
+            Booking.venueId == venue_id,
+            Booking.isCancelled.is_(False),
+            or_(Booking.isUsed.is_(True), Booking.isConfirmed.is_(True)),
+        )
         .with_entities(coalesce(func.sum(Booking.quantity), 0))
         .one()[0]
     )
@@ -299,15 +296,11 @@ def find_cancellable_bookings_by_beneficiaries(users: list[User]) -> list[Bookin
 
 
 def find_cancellable_bookings_by_offerer(offerer_id: int) -> list[Booking]:
-    return (
-        Booking.query.join(Stock)
-        .join(Offer)
-        .join(Venue)
-        .filter(Venue.managingOffererId == offerer_id)
-        .filter(Booking.isCancelled.is_(False))
-        .filter(Booking.isUsed.is_(False))
-        .all()
-    )
+    return Booking.query.filter(
+        Booking.offererId == offerer_id,
+        Booking.isCancelled.is_(False),
+        Booking.isUsed.is_(False),
+    ).all()
 
 
 def _filter_bookings_recap_query(
@@ -319,16 +312,7 @@ def _filter_bookings_recap_query(
     is_user_admin: bool = False,
 ) -> Query:
     booking_date = cast(func.timezone(Venue.timezone, func.timezone("UTC", Booking.dateCreated)), Date)
-    query = (
-        bookings_recap_query.outerjoin(Payment)
-        .reset_joinpoint()
-        .join(User)
-        .join(Stock)
-        .join(Offer)
-        .join(Venue)
-        .join(Offerer)
-        .join(UserOfferer)
-    )
+    query = bookings_recap_query.outerjoin(Payment).reset_joinpoint().join(Venue).join(Offerer).join(UserOfferer)
 
     if not is_user_admin:
         query = query.filter(UserOfferer.userId == user_id)
@@ -338,7 +322,7 @@ def _filter_bookings_recap_query(
     )
 
     if venue_id:
-        query = query.filter(Venue.id == venue_id)
+        query = query.filter(Booking.venueId == venue_id)
 
     if event_date:
         query = query.filter(
