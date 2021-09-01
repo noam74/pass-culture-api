@@ -231,7 +231,7 @@ def validate_offerer(token: str) -> None:
 
 
 def save_venue_banner(user: User, venue: Venue, content: bytes, content_type: str, file_name: str) -> None:
-    bucket_name = settings.VENUE_BANNER_BUCKET_NAME
+    bucket_name = settings.BASE_BUCKET_NAME
     object_storage.store_public_object(
         bucket=bucket_name,
         object_id=str(venue.id),
