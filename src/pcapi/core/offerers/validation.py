@@ -1,6 +1,5 @@
 from decimal import Decimal
 from decimal import InvalidOperation
-import imghdr
 
 from pcapi.models import ApiErrors
 from pcapi.models import Venue
@@ -69,15 +68,3 @@ def _validate_latitude(api_errors, raw_latitude):
     else:
         if latitude > MAX_LATITUDE or latitude < -MAX_LATITUDE:
             api_errors.add_error("latitude", "La latitude doit être comprise entre -90.0 et +90.0")
-
-
-def check_venue_banner_content(content: bytes) -> str:
-    if len(content) > VENUE_BANNER_MAX_SIZE:
-        msg = f"Image trop grande, max: {VENUE_BANNER_MAX_SIZE / 1_000}Ko"
-        raise ApiErrors({"Image": msg})
-
-    image_type = imghdr.what(None, h=content)
-    if image_type not in {"jpg", "jpeg", "png"}:
-        raise ApiErrors({"Image": "format non reconnu"})
-
-    return image_type

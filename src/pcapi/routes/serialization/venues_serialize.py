@@ -239,7 +239,7 @@ class VenueListQueryModel(BaseModel):
         extra = "forbid"
 
 
-class VenueBannerModel(BaseModel):
+class VenueBannerRequestModel(BaseModel):
     request: typing.Any
 
     @classmethod
@@ -259,3 +259,21 @@ class VenueBannerModel(BaseModel):
             raise ValueError(f"Image trop grande, max: {VENUE_BANNER_MAX_SIZE / 1_000}Ko")
 
         return request
+
+
+class VenueBannerContentModel(BaseModel):
+    content: pydantic.conbytes(min_length=2, max_length=VENUE_BANNER_MAX_SIZE)  # type: ignore
+    content_type: pydantic.constr(strip_whitespace=True, to_lower=True, max_length=16)  # type: ignore
+    file_name: pydantic.constr(strip_whitespace=True, to_lower=True, max_length=256)  # type: ignore
+
+    class Config:
+        extra = pydantic.Extra.forbid
+        anystr_strip_whitespace = True
+
+    @classmethod
+    @validator("content")
+    def validate_content_type(cls, content_type: str) -> str:
+        legit_image_types = {"jpg", "jpeg", "png"}
+        if content_type not in legit_image_types:
+            raise ValueError(f"format non reconnu (formats valides: {legit_image_types})")
+        return content_type

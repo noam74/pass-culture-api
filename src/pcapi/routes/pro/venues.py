@@ -1,3 +1,5 @@
+import imghdr
+
 from flask import request
 from flask_login import current_user
 from flask_login import login_required
@@ -6,7 +8,6 @@ from pcapi.core.bookings.repository import get_legacy_active_bookings_quantity_f
 from pcapi.core.bookings.repository import get_legacy_validated_bookings_quantity_for_venue
 from pcapi.core.offerers import api as offerers_api
 from pcapi.core.offerers import repository as offerers_repository
-from pcapi.core.offerers import validation
 from pcapi.core.offerers.models import Venue
 from pcapi.core.offers.repository import get_active_offers_count_for_venue
 from pcapi.core.offers.repository import get_sold_out_offers_count_for_venue
@@ -111,16 +112,22 @@ def upsert_venue_banner(venue_id: str) -> None:
 
     check_user_has_access_to_offerer(current_user, venue.managingOffererId)
 
-    valid_request = venues_serialize.VenueBannerModel(request=request).request
-    content = valid_request.files["banner"].read()
-    content_type = validation.check_venue_banner_content(content)
+    valid_request = venues_serialize.VenueBannerRequestModel(request=request).request
+
+    file = valid_request.files["banner"]
+    raw_content = file.read()
+    venue_banner = venues_serialize.VenueBannerContentModel(
+        content=raw_content,
+        content_type=imghdr.what(None, h=raw_content),
+        file_name=file.filename,
+    )
 
     offerers_api.save_venue_banner(
         user=current_user,
         venue=venue,
-        content=content,
-        content_type=content_type,
-        file_name=request.files["banner"].filename,
+        content=venue_banner.content,
+        content_type=venue_banner.content_type,
+        file_name=venue_banner.file_name,
     )
 
 
