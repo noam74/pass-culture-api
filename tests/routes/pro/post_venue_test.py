@@ -200,7 +200,7 @@ class VenueBannerTest:
         image_content = (IMAGES_DIR / "mouette_landscape.jpg").read_bytes()
         file = {"banner": (io.BytesIO(image_content), "jerome_le_banner.jpg")}
 
-        client = client.with_auth(email=user_offerer.user.email)
+        client = client.with_session_auth(email=user_offerer.user.email)
         url = f"/venues/{humanize(venue.id)}/banner"
 
         with tempfile.TemporaryDirectory() as tmpdirname:
