@@ -50,7 +50,9 @@ def get_bookings_cancellation_notification_data(booking_ids: list[int]) -> Optio
 
 def get_tomorrow_stock_notification_data(stock_id: int) -> Optional[TransactionalNotificationData]:
     stock = Stock.query.filter_by(id=stock_id).join(Booking).join(Stock.offer).one()
-    bookings = [booking for booking in stock.bookings if not booking.isCancelled]
+    bookings = [
+        booking for booking in stock.bookings if not booking.isCancelled and booking.educationalBookingId is None
+    ]
 
     if not bookings:
         return None
