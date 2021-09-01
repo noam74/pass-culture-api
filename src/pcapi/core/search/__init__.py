@@ -3,6 +3,7 @@ from typing import Iterable
 
 from pcapi import settings
 from pcapi.models import Offer
+from pcapi.models import Venue
 from pcapi.repository import offer_queries
 from pcapi.utils.module_loading import import_string
 
@@ -159,6 +160,8 @@ def _index_venues_in_queue(backend):
             page += 1
         logger.info("Finished indexing offers of venue", extra={"venue": venue_id, "backend": str(backend)})
 
+    venues = Venue.query.filter(Venue.id.in_(venue_ids)).yield_per(3_000)
+    backend.index_venues(venues)
     backend.delete_venue_ids_from_queue(venue_ids)
 
 

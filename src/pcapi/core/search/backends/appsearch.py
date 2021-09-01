@@ -9,6 +9,7 @@ from flask import current_app
 import redis
 
 from pcapi import settings
+import pcapi.core.offerers.models as offerers_models
 import pcapi.core.offers.models as offers_models
 from pcapi.utils import requests
 import pcapi.utils.date as date_utils
@@ -69,6 +70,29 @@ OFFERS_SYNONYM_SET = (
     {"tome", "T."},
 )
 
+VENUES_ENGINE_NAME = "offers"
+
+VENUES_SCHEMA = {
+    "name": "text",
+    "venueType": "text",
+    "latitude": "number",
+    "longitude": "number",
+    "description": "text",
+    "audioDisabilityCompliant": "text",
+    "mentalDisabilityCompliant": "text",
+    "motorDisabilityCompliant": "text",
+    "visualDisabilityCompliant": "text",
+    "email": "text",
+    "phoneNumber": "text",
+    "website": "text",
+    "facebook": "text",
+    "twitter": "text",
+    "instagram": "text",
+    "snapchat": "text",
+}
+
+VENUES_SYNONYM_SET = ()
+
 
 logger = logging.getLogger(__name__)
 
@@ -107,6 +131,15 @@ class AppSearchBackend(base.SearchBackend):
             synonyms=OFFERS_SYNONYM_SET,
             schema=OFFERS_SCHEMA,
         )
+
+        self.venues_engine = AppSearchApiClient(
+            host=settings.APPSEARCH_HOST,
+            api_key=settings.APPSEARCH_API_KEY,
+            engine_name=VENUES_ENGINE_NAME,
+            synonyms=OFFERS_SYNONYM_SET,
+            schema=VENUES_SCHEMA,
+        )
+
         self.redis_client = current_app.redis_client
 
     def enqueue_offer_ids(self, offer_ids: Iterable[int]):
@@ -190,6 +223,12 @@ class AppSearchBackend(base.SearchBackend):
         documents = [self.serialize_offer(offer) for offer in offers]
         self.offers_engine.create_or_update_documents(documents)
 
+    def index_venues(self, venues: Iterable[offerers_models.Venue]) -> None:
+        if not venues:
+            return
+        documents = [self.serialize_venue(venue) for venue in venues]
+        self.offers_engine.create_or_update_documents(documents)
+
     def unindex_offer_ids(self, offer_ids: Iterable[int]) -> None:
         if not offer_ids:
             return
@@ -255,6 +294,27 @@ class AppSearchBackend(base.SearchBackend):
             "venue_name": venue.name,
             "venue_position": position,
             "venue_public_name": venue.publicName,
+        }
+
+    def serialize_venue(self, venue: offerers_models.Venue) -> dict:
+        social_medias = getattr(venue.contact, "socialMedias", None)
+        return {
+            "name": venue.name,
+            "venueType": venue.VenueTypeCode,
+            "latitude": venue.latitude,
+            "longitude": venue.longitude,
+            "description": venue.description,
+            "audioDisabilityCompliant": venue.audioDisabilityCompliant,
+            "mentalDisabilityCompliant": venue.mentalDisabilityCompliant,
+            "motorDisabilityCompliant": venue.motorDisabilityCompliant,
+            "visualDisabilityCompliant": venue.visualDisabilityCompliant,
+            "email": getattr(venue.contact, "email", None),
+            "phoneNumber": getattr(venue.contact, "phoneNumber", None),
+            "website": getattr(venue.contact, "website", None),
+            "facebook": getattr(social_medias, "facebook", None),
+            "twitter": getattr(social_medias, "twitter", None),
+            "instagram": getattr(social_medias, "instagram", None),
+            "snapchat": getattr(social_medias, "snapchat", None),
         }
 
 
