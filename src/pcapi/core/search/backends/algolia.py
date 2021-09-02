@@ -6,6 +6,7 @@ from flask import current_app
 import redis
 
 from pcapi import settings
+import pcapi.core.offerers.models as offerers_models
 import pcapi.core.offers.models as offers_models
 from pcapi.core.search.backends import base
 import pcapi.utils.date as date_utils
@@ -164,6 +165,11 @@ class AlgoliaBackend(base.SearchBackend):
         finally:
             pipeline.reset()
 
+    def index_venues(self, offers: Iterable[offerers_models.Venue]) -> None:
+        # No need to implement venue indexing now since the Algolia backend
+        # will be removed soon.
+        pass
+
     def unindex_offer_ids(self, offer_ids: Iterable[int]) -> None:
         if not offer_ids:
             return
@@ -186,8 +192,17 @@ class AlgoliaBackend(base.SearchBackend):
                 "Could not clear indexed offers cache",
             )
 
-    @classmethod
-    def serialize_offer(cls, offer: offers_models.Offer) -> dict:
+    def unindex_venue_ids(self, venues: Iterable[int]) -> None:
+        # No need to implement venue indexing now since the Algolia backend
+        # will be removed soon.
+        pass
+
+    def unindex_all_venues(self) -> None:
+        # No need to implement venue indexing now since the Algolia backend
+        # will be removed soon.
+        pass
+
+    def serialize_offer(self, offer: offers_models.Offer) -> dict:
         venue = offer.venue
         offerer = venue.managingOfferer
         humanize_offer_id = humanize(offer.id)
@@ -279,3 +294,8 @@ class AlgoliaBackend(base.SearchBackend):
             )
 
         return object_to_index
+
+    def serialize_venue(self, venue: offerers_models.Venue) -> dict:
+        # No need to implement venue indexing now since the Algolia backend
+        # will be removed soon.
+        return {}
