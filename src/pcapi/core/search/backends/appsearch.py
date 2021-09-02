@@ -70,7 +70,7 @@ OFFERS_SYNONYM_SET = (
     {"tome", "T."},
 )
 
-VENUES_ENGINE_NAME = "offers"
+VENUES_ENGINE_NAME = "venues"
 
 VENUES_SCHEMA = {
     "name": "text",
@@ -136,7 +136,7 @@ class AppSearchBackend(base.SearchBackend):
             host=settings.APPSEARCH_HOST,
             api_key=settings.APPSEARCH_API_KEY,
             engine_name=VENUES_ENGINE_NAME,
-            synonyms=OFFERS_SYNONYM_SET,
+            synonyms=VENUES_SYNONYM_SET,
             schema=VENUES_SCHEMA,
         )
 
@@ -227,7 +227,7 @@ class AppSearchBackend(base.SearchBackend):
         if not venues:
             return
         documents = [self.serialize_venue(venue) for venue in venues]
-        self.offers_engine.create_or_update_documents(documents)
+        self.venues_engine.create_or_update_documents(documents)
 
     def unindex_offer_ids(self, offer_ids: Iterable[int]) -> None:
         if not offer_ids:
@@ -305,10 +305,11 @@ class AppSearchBackend(base.SearchBackend):
         }
 
     def serialize_venue(self, venue: offerers_models.Venue) -> dict:
-        social_medias = getattr(venue.contact, "socialMedias", None)
+        social_medias = getattr(venue.contact, "social_medias", {})
         return {
+            "id": venue.id,
             "name": venue.name,
-            "venueType": venue.VenueTypeCode,
+            "venueType": venue.venueTypeCode,
             "latitude": venue.latitude,
             "longitude": venue.longitude,
             "description": venue.description,
@@ -317,7 +318,7 @@ class AppSearchBackend(base.SearchBackend):
             "motorDisabilityCompliant": venue.motorDisabilityCompliant,
             "visualDisabilityCompliant": venue.visualDisabilityCompliant,
             "email": getattr(venue.contact, "email", None),
-            "phoneNumber": getattr(venue.contact, "phoneNumber", None),
+            "phoneNumber": getattr(venue.contact, "phone_number", None),
             "website": getattr(venue.contact, "website", None),
             "facebook": getattr(social_medias, "facebook", None),
             "twitter": getattr(social_medias, "twitter", None),
