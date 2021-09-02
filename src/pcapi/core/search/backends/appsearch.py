@@ -237,6 +237,14 @@ class AppSearchBackend(base.SearchBackend):
     def unindex_all_offers(self) -> None:
         self.offers_engine.delete_all_documents()
 
+    def unindex_venue_ids(self, venue_ids: Iterable[int]) -> None:
+        if not venue_ids:
+            return
+        self.venues_engine.delete_documents(venue_ids)
+
+    def unindex_all_venues(self) -> None:
+        self.venues_engine.delete_all_documents()
+
     def serialize_offer(self, offer: offers_models.Offer) -> dict:
         stocks = offer.bookableStocks
         dates = []
