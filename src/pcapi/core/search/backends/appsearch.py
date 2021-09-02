@@ -246,7 +246,8 @@ class AppSearchBackend(base.SearchBackend):
     def unindex_all_venues(self) -> None:
         self.venues_engine.delete_all_documents()
 
-    def serialize_offer(self, offer: offers_models.Offer) -> dict:
+    @classmethod
+    def serialize_offer(cls, offer: offers_models.Offer) -> dict:
         stocks = offer.bookableStocks
         dates = []
         times = []
@@ -305,7 +306,8 @@ class AppSearchBackend(base.SearchBackend):
             "venue_public_name": venue.publicName,
         }
 
-    def serialize_venue(self, venue: offerers_models.Venue) -> dict:
+    @classmethod
+    def serialize_venue(cls, venue: offerers_models.Venue) -> dict:
         social_medias = getattr(venue.contact, "social_medias", {})
         return {
             "id": venue.id,

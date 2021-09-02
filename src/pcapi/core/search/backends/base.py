@@ -50,8 +50,10 @@ class SearchBackend:
     def unindex_all_venues(self) -> None:
         raise NotImplementedError()
 
-    def serialize_offer(self, offer: offers_models.Offer) -> dict:
+    @classmethod
+    def serialize_offer(cls, offer: offers_models.Offer) -> dict:
         raise NotImplementedError()
 
-    def serialize_venue(self, venue: offerers_models.Venue) -> dict:
+    @classmethod
+    def serialize_venue(cls, venue: offerers_models.Venue) -> dict:
         raise NotImplementedError()

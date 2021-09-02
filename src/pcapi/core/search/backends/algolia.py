@@ -202,7 +202,8 @@ class AlgoliaBackend(base.SearchBackend):
         # will be removed soon.
         pass
 
-    def serialize_offer(self, offer: offers_models.Offer) -> dict:
+    @classmethod
+    def serialize_offer(cls, offer: offers_models.Offer) -> dict:
         venue = offer.venue
         offerer = venue.managingOfferer
         humanize_offer_id = humanize(offer.id)
@@ -295,7 +296,8 @@ class AlgoliaBackend(base.SearchBackend):
 
         return object_to_index
 
-    def serialize_venue(self, venue: offerers_models.Venue) -> dict:
+    @classmethod
+    def serialize_venue(cls, venue: offerers_models.Venue) -> dict:
         # No need to implement venue indexing now since the Algolia backend
         # will be removed soon.
         return {}
