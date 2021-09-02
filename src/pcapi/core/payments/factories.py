@@ -21,7 +21,28 @@ from . import models as payments_models
 REIMBURSEMENT_RULE_DESCRIPTIONS = {t.description for t in reimbursement.REGULAR_RULES}
 
 
-class DepositAge18Factory(BaseFactory):
+class DepositGrant17Factory(BaseFactory):
+    class Meta:
+        model = models.Deposit
+
+    user = factory.SubFactory(users_factories.BeneficiaryFactory)
+    source = "public"
+    type = DepositType.GRANT_17
+    version = 1
+    expirationDate = factory.LazyFunction(api._get_expiration_date)
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        if "amount" in kwargs:
+            raise ValueError("You cannot directly set deposit amount: set version instead")
+        version = kwargs.get("version", bookings_conf.get_current_deposit_version_for_type(DepositType.GRANT_17))
+        amount = bookings_conf.get_limit_configuration_for_type_and_version(DepositType.GRANT_17, version).TOTAL_CAP
+        kwargs["version"] = version
+        kwargs["amount"] = amount
+        return super()._create(model_class, *args, **kwargs)
+
+
+class DepositGrant18Factory(BaseFactory):
     class Meta:
         model = models.Deposit
 
