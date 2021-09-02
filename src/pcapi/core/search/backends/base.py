@@ -1,10 +1,11 @@
 from typing import Iterable
 
+import pcapi.core.offerers.models as offerers_models
 import pcapi.core.offers.models as offers_models
 
 
 class SearchBackend:
-    def __str__(self):  # useful in logs
+    def __str__(self) -> str:  # useful in logs
         return str(self.__class__.__name__)
 
     def enqueue_offer_ids(self, offer_ids: Iterable[int]) -> None:
@@ -34,12 +35,23 @@ class SearchBackend:
     def index_offers(self, offers: Iterable[offers_models.Offer]) -> None:
         raise NotImplementedError()
 
+    def index_venues(self, offers: Iterable[offerers_models.Venue]) -> None:
+        raise NotImplementedError()
+
     def unindex_offer_ids(self, offers: Iterable[int]) -> None:
         raise NotImplementedError()
 
     def unindex_all_offers(self) -> None:
         raise NotImplementedError()
 
-    @classmethod
-    def serialize_offer(cls, offer: offers_models.Offer) -> dict:
+    def unindex_venue_ids(self, venues: Iterable[int]) -> None:
+        raise NotImplementedError()
+
+    def unindex_all_venues(self) -> None:
+        raise NotImplementedError()
+
+    def serialize_offer(self, offer: offers_models.Offer) -> dict:
+        raise NotImplementedError()
+
+    def serialize_venue(self, venue: offerers_models.Venue) -> dict:
         raise NotImplementedError()
