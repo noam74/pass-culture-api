@@ -1256,7 +1256,7 @@ class FindSoonToBeExpiredBookingsTest:
         )
 
         # When
-        expired_bookings = booking_repository.find_soon_to_be_expiring_booking_ordered_by_user().all()
+        expired_bookings = booking_repository.find_soon_to_be_expiring_non_eac_booking_ordered_by_user().all()
 
         # Then
         assert expired_bookings == [expected_booking]

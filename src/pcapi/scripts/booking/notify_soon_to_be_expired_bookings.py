@@ -11,18 +11,18 @@ from pcapi.domain.user_emails import send_soon_to_be_expired_bookings_recap_emai
 logger = logging.getLogger(__name__)
 
 
-def notify_soon_to_be_expired_bookings() -> None:
-    logger.info("[notify_soon_to_be_expired_bookings] Start")
+def notify_soon_to_be_expired_non_eac_bookings() -> None:
+    logger.info("[notify_soon_to_be_expired_non_eac_bookings] Start")
     if settings.IS_STAGING:
-        logger.info("[handle_expired_bookings] ENV=STAGING: Skipping")
+        logger.info("[handle_expired_non_eac_bookings] ENV=STAGING: Skipping")
     else:
-        notify_users_of_soon_to_be_expired_bookings()
-    logger.info("[notify_soon_to_be_expired_bookings] End")
+        notify_users_of_soon_to_be_expired_non_eac_bookings()
+    logger.info("[notify_soon_to_be_expired_non_eac_bookings] End")
 
 
-def notify_users_of_soon_to_be_expired_bookings(given_date: datetime.date = None) -> None:
+def notify_users_of_soon_to_be_expired_non_eac_bookings(given_date: datetime.date = None) -> None:
     logger.info("[notify_users_of_soon_to_be_expired_bookings] Start")
-    bookings_ordered_by_user = bookings_repository.find_soon_to_be_expiring_booking_ordered_by_user(given_date)
+    bookings_ordered_by_user = bookings_repository.find_soon_to_be_expiring_non_eac_booking_ordered_by_user(given_date)
 
     expired_bookings_grouped_by_user = dict()
     for user, booking in groupby(bookings_ordered_by_user, attrgetter("user")):
