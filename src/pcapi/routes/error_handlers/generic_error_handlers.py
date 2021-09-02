@@ -1,3 +1,4 @@
+from json.decoder import JSONDecodeError
 import logging
 from typing import Union
 
@@ -50,7 +51,7 @@ def internal_error(error: Exception) -> Union[tuple[dict, int], HTTPException]:
 
 @app.errorhandler(UnauthorizedError)
 def unauthorized_error(error: UnauthorizedError) -> Response:
-    headers = {}
+    headers: dict = {}
     if error.www_authenticate:
         headers["WWW-Authenticate"] = error.www_authenticate
         if error.realm:
@@ -106,8 +107,12 @@ def ratelimit_handler(error: Exception) -> tuple[dict, int]:
     from pcapi.utils.login_manager import get_request_authorization
 
     identifier = None
-    if request.json and "identifier" in request.json:
-        identifier = request.json["identifier"]
+    try:
+        if request.json and "identifier" in request.json:
+            identifier = request.json["identifier"]
+    except JSONDecodeError as e:
+        logger.info("Could not extract user identifier from request: %s", e)
+
     auth = get_request_authorization()
     if auth and auth.username:
         identifier = auth.username
