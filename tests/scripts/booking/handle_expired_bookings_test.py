@@ -201,7 +201,7 @@ class NotifyUsersOfExpiredBookingsTest:
 @pytest.mark.usefixtures("db_session")
 class NotifyOfferersOfExpiredBookingsTest:
     @mock.patch("pcapi.scripts.booking.handle_expired_bookings.send_expired_bookings_recap_email_to_offerer")
-    def should_notify_of_todays_expired_bookings(self, mocked_send_email_recap, app) -> None:
+    def test_should_notify_of_todays_expired_bookings(self, mocked_send_email_recap, app) -> None:
         now = datetime.utcnow()
         yesterday = now - timedelta(days=1)
         long_ago = now - timedelta(days=31)
@@ -237,3 +237,23 @@ class NotifyOfferersOfExpiredBookingsTest:
             expired_today_cd_booking.stock.offer.venue.managingOfferer,
             [expired_today_cd_booking],
         )
+
+    @mock.patch("pcapi.scripts.booking.handle_expired_bookings.send_expired_bookings_recap_email_to_offerer")
+    def test_should_not_notify_of_todays_expired_eac_bookings(self, mocked_send_email_recap, app) -> None:
+        # Given
+        now = datetime.utcnow()
+        long_ago = now - timedelta(days=31)
+        dvd = ProductFactory(subcategoryId=subcategories.SUPPORT_PHYSIQUE_FILM.id)
+        EducationalBookingFactory(
+            stock__offer__product=dvd,
+            dateCreated=long_ago,
+            isCancelled=True,
+            status=BookingStatus.CANCELLED,
+            cancellationReason=BookingCancellationReasons.EXPIRED,
+        )
+
+        # Given
+        handle_expired_bookings.notify_offerers_of_expired_bookings()
+
+        # Then
+        assert not mocked_send_email_recap.called

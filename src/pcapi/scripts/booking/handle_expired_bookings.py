@@ -127,7 +127,9 @@ def notify_offerers_of_expired_bookings(expired_on: datetime.date = None) -> Non
     expired_on = expired_on or datetime.date.today()
     logger.info("[notify_offerers_of_expired_bookings] Start")
 
-    expired_bookings_ordered_by_offerer = bookings_repository.find_expired_bookings_ordered_by_offerer(expired_on)
+    expired_bookings_ordered_by_offerer = bookings_repository.find_expired_non_eac_bookings_ordered_by_offerer(
+        expired_on
+    )
     expired_bookings_grouped_by_offerer = dict()
     for offerer, booking in groupby(
         expired_bookings_ordered_by_offerer, attrgetter("stock.offer.venue.managingOfferer")

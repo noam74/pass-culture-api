@@ -215,7 +215,7 @@ def find_expired_non_eac_bookings_ordered_by_user(expired_on: date = None) -> Qu
     )
 
 
-def find_expired_bookings_ordered_by_offerer(expired_on: date = None) -> Query:
+def find_expired_non_eac_bookings_ordered_by_offerer(expired_on: date = None) -> Query:
     expired_on = expired_on or date.today()
     return (
         Booking.query.join(Stock)
@@ -225,6 +225,7 @@ def find_expired_bookings_ordered_by_offerer(expired_on: date = None) -> Query:
         .filter(Booking.isCancelled.is_(True))
         .filter(cast(Booking.cancellationDate, Date) == expired_on)
         .filter(Booking.cancellationReason == BookingCancellationReasons.EXPIRED)
+        .filter(Booking.educationalBookingId == None)
         .order_by(Offerer.id)
         .all()
     )
