@@ -1,5 +1,6 @@
 import datetime
 import decimal
+import enum
 import json
 import logging
 from typing import Iterable
@@ -424,4 +425,6 @@ class AppSearchJsonEncoder(json.JSONEncoder):
             return obj.isoformat().split(".")[0] + "Z"
         if isinstance(obj, decimal.Decimal):
             return float(obj)
+        if isinstance(obj, enum.Enum):
+            return str(obj)
         return super().default(obj)
