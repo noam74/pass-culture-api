@@ -321,10 +321,10 @@ class AppSearchBackend(base.SearchBackend):
             "email": getattr(venue.contact, "email", None),
             "phoneNumber": getattr(venue.contact, "phone_number", None),
             "website": getattr(venue.contact, "website", None),
-            "facebook": getattr(social_medias, "facebook", None),
-            "twitter": getattr(social_medias, "twitter", None),
-            "instagram": getattr(social_medias, "instagram", None),
-            "snapchat": getattr(social_medias, "snapchat", None),
+            "facebook": social_medias.get("facebook"),
+            "twitter": social_medias.get("twitter"),
+            "instagram": social_medias.get("instagram"),
+            "snapchat": social_medias.get("snapchat"),
         }
 
 
