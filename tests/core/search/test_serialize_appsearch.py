@@ -194,3 +194,39 @@ def test_do_no_return_booleans():
 )
 def test_url_path(url, expected):
     assert appsearch.url_path(url) == expected
+
+
+def test_serialize_venue():
+    venue = offers_factories.VenueFactory(
+        venueTypeCode="VISUAL_ARTS",
+        contact__email="some@email.com",
+        contact__website=None,
+        contact__phone_number=None,
+        contact__social_medias={
+            "facebook": None,
+            "instagram": None,
+            "snapchat": None,
+            "twitter": "https://twitter.com/my.venue",
+        },
+    )
+
+    serialized = appsearch.AppSearchBackend().serialize_venue(venue)
+    assert serialized == {
+        "id": venue.id,
+        "name": venue.name,
+        "venueType": venue.venueTypeCode,
+        "latitude": venue.latitude,
+        "longitude": venue.longitude,
+        "description": venue.description,
+        "audioDisabilityCompliant": venue.audioDisabilityCompliant,
+        "mentalDisabilityCompliant": venue.mentalDisabilityCompliant,
+        "motorDisabilityCompliant": venue.motorDisabilityCompliant,
+        "visualDisabilityCompliant": venue.visualDisabilityCompliant,
+        "email": "some@email.com",
+        "phoneNumber": None,
+        "website": None,
+        "facebook": None,
+        "twitter": "https://twitter.com/my.venue",
+        "instagram": None,
+        "snapchat": None,
+    }
