@@ -490,6 +490,7 @@ class StepsToBecomeBeneficiaryTest:
             applicationId=0, beneficiary=user, source=BeneficiaryImportSources.jouve.value
         )
         beneficiary_import.setStatus(ImportStatus.CREATED, author=user)
+        user.hasCompletedIdCheck = True
 
         assert steps_to_become_beneficiary(user) == []
 
@@ -499,6 +500,7 @@ class StepsToBecomeBeneficiaryTest:
 
         beneficiary_import = BeneficiaryImportFactory(beneficiary=user)
         beneficiary_import.setStatus(ImportStatus.CREATED, author=user)
+        user.hasCompletedIdCheck = True
 
         assert steps_to_become_beneficiary(user) == [BeneficiaryValidationStep.PHONE_VALIDATION]
         assert not user.isBeneficiary
@@ -513,6 +515,7 @@ class StepsToBecomeBeneficiaryTest:
         expected = [
             BeneficiaryValidationStep.PHONE_VALIDATION,
             BeneficiaryValidationStep.ID_CHECK,
+            BeneficiaryValidationStep.BENEFICIARY_INFORMATION,
         ]
         assert steps_to_become_beneficiary(user) == expected
         assert not user.isBeneficiary
@@ -524,6 +527,7 @@ class StepsToBecomeBeneficiaryTest:
         expected = [
             BeneficiaryValidationStep.PHONE_VALIDATION,
             BeneficiaryValidationStep.ID_CHECK,
+            BeneficiaryValidationStep.BENEFICIARY_INFORMATION,
         ]
         assert steps_to_become_beneficiary(user) == expected
         assert not user.isBeneficiary

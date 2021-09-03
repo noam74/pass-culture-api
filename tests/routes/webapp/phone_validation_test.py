@@ -47,7 +47,7 @@ def test_send_phone_validation_and_become_beneficiary(app):
     Test that a user with a CREATED import becomes a beneficiary once its phone
     number is vaidated.
     """
-    user = UserFactory(isBeneficiary=False, isEmailValidated=True, phoneNumber="+33601020304")
+    user = UserFactory(isBeneficiary=False, isEmailValidated=True, phoneNumber="+33601020304", hasCompletedIdCheck=True)
     beneficiary_import = BeneficiaryImportFactory(beneficiary=user)
     beneficiary_import.setStatus(ImportStatus.CREATED)
 

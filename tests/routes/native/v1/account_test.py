@@ -1096,7 +1096,7 @@ class ValidatePhoneNumberTest:
         assert int(app.redis_client.get(f"phone_validation_attempts_user_{user.id}")) == 2
 
     def test_validate_phone_number_and_become_beneficiary(self, app):
-        user = users_factories.UserFactory(phoneNumber="+33607080900")
+        user = users_factories.UserFactory(phoneNumber="+33607080900", hasCompletedIdCheck=True)
 
         beneficiary_import = BeneficiaryImportFactory(beneficiary=user)
         beneficiary_import.setStatus(ImportStatus.CREATED)
