@@ -260,7 +260,6 @@ class RunTest:
                 address="35 Rue Saint Denis 93130 Noisy-le-Sec",
                 postal_code="67200",
             ),
-            new_beneficiaries=[],
             procedure_id=6712558,
             preexisting_account=applicant,
         )
@@ -289,9 +288,7 @@ class ProcessBeneficiaryApplicationTest:
         )
 
         # when
-        remote_import.process_beneficiary_application(
-            information=information, new_beneficiaries=[], procedure_id=123456
-        )
+        remote_import.process_beneficiary_application(information=information, procedure_id=123456)
 
         # then
         first = User.query.first()
@@ -323,9 +320,7 @@ class ProcessBeneficiaryApplicationTest:
         )
 
         # when
-        remote_import.process_beneficiary_application(
-            information=information, new_beneficiaries=[], procedure_id=123456
-        )
+        remote_import.process_beneficiary_application(information=information, procedure_id=123456)
 
         # then
         beneficiary_import = BeneficiaryImport.query.first()
@@ -346,9 +341,7 @@ class ProcessBeneficiaryApplicationTest:
         create_beneficiary_from_application.return_value = users_factories.BeneficiaryFactory.build()
 
         # when
-        remote_import.process_beneficiary_application(
-            information=information, new_beneficiaries=[], procedure_id=123456
-        )
+        remote_import.process_beneficiary_application(information=information, procedure_id=123456)
 
         # then
         send_activation_email.assert_called()
@@ -364,15 +357,13 @@ class ProcessBeneficiaryApplicationTest:
         information = fraud_factories.DMSContentFactory(application_id=123)
         create_beneficiary_from_application.side_effect = [User()]
         mock_repository.save.side_effect = [ApiErrors({"postalCode": ["baaaaad value"]})]
-        new_beneficiaries = []
 
         # when
-        remote_import.process_beneficiary_application(information, new_beneficiaries, procedure_id=123456)
+        remote_import.process_beneficiary_application(information, procedure_id=123456)
 
         # then
         send_activation_email.assert_not_called()
         assert len(push_testing.requests) == 0
-        assert not new_beneficiaries
 
 
 class ParseBeneficiaryInformationTest:
