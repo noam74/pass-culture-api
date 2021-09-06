@@ -18,6 +18,7 @@ ACTIVATION_NEW_BOOKING_AUTO_EXPIRY_DELAY_DATE = (
     else datetime.date(2021, 9, 22)
 )
 BOOKINGS_EXPIRY_NOTIFICATION_DELAY = datetime.timedelta(days=7)
+BOOKS_BOOKINGS_EXPIRY_NOTIFICATION_DELAY = datetime.timedelta(days=5)
 AUTO_USE_AFTER_EVENT_TIME_DELAY = datetime.timedelta(hours=48)
 
 
