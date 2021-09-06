@@ -119,7 +119,8 @@ class CancelExpiredBookingsTest:
         book = ProductFactory(subcategoryId=subcategories.LIVRE_PAPIER.id)
         BookingFactory.create_batch(size=10, stock__offer__product=book, dateCreated=two_months_ago)
         n_queries = (
-            1  # select count
+            1  # select feature."isActive"
+            + 1  # select count
             + 1  # select initial booking ids
             + 1  # release savepoint/COMMIT
             + 4

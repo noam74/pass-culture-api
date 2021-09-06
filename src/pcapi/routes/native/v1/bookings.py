@@ -79,13 +79,7 @@ def get_bookings(user: User) -> BookingsResponse:
         .options(
             joinedload(Booking.stock)
             .joinedload(Stock.offer)
-            .load_only(
-                Offer.name,
-                Offer.url,
-                Offer.type,
-                Offer.withdrawalDetails,
-                Offer.extraData,
-            )
+            .load_only(Offer.name, Offer.url, Offer.type, Offer.withdrawalDetails, Offer.extraData, Offer.subcategoryId)
         )
         .options(joinedload(Booking.stock).joinedload(Stock.offer).joinedload(Offer.mediations))
         .options(
