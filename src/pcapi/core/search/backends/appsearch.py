@@ -293,6 +293,25 @@ class AppSearchApiClient:
             response = requests.post(self.synonyms_url, headers=self.headers, json=data)
             yield response
 
+    # Search settings API: https://www.elastic.co/guide/en/app-search/current/search-settings.html
+    @property
+    def search_settings_url(self):
+        path = f"/api/as/v1/engines/{ENGINE_NAME}/search_settings"
+        return f"{self.host}{path}"
+
+    def set_boosts(self):
+        search_settings = {
+            "boosts": {
+                "ranking_weight": {
+                    "type": "functional",
+                    "function": "linear",
+                    "operation": "multiply",
+                    "factor": 1,
+                }
+            }
+        }
+        return requests.put(self.search_settings_url, headers=self.headers, json=search_settings)
+
     # Documents API: https://www.elastic.co/guide/en/app-search/current/documents.html
     @property
     def documents_url(self):
