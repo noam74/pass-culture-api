@@ -18,6 +18,7 @@ from sqlalchemy.util._collections import AbstractKeyedTuple
 
 from pcapi.core.bookings import conf
 from pcapi.core.bookings.models import BookingCancellationReasons
+from pcapi.core.bookings.models import IndividualBooking
 from pcapi.core.offerers.models import Offerer
 from pcapi.core.users.models import User
 from pcapi.core.users.utils import sanitize_email
@@ -176,7 +177,7 @@ def find_expiring_bookings_ids() -> Query:
     return find_expiring_bookings().order_by(Booking.id).with_entities(Booking.id)
 
 
-def find_soon_to_be_expiring_non_eac_booking_ordered_by_user(given_date: date = None) -> Query:
+def find_soon_to_be_expiring_individual_bookings_ordered_by_user(given_date: date = None) -> Query:
     given_date = given_date or date.today()
     given_date = datetime.combine(given_date, time(0, 0)) + conf.BOOKINGS_EXPIRY_NOTIFICATION_DELAY
     window = (datetime.combine(given_date, time(0, 0)), datetime.combine(given_date, time(23, 59, 59)))

@@ -9,7 +9,9 @@ from pcapi.core.bookings.factories import EducationalBookingFactory
 from pcapi.core.categories import subcategories
 from pcapi.core.offers.factories import ProductFactory
 from pcapi.repository import repository
-from pcapi.scripts.booking.notify_soon_to_be_expired_bookings import notify_users_of_soon_to_be_expired_non_eac_bookings
+from pcapi.scripts.booking.notify_soon_to_be_expired_bookings import (
+    notify_users_of_soon_to_be_expired_individual_bookings,
+)
 
 
 @pytest.mark.usefixtures("db_session")
@@ -17,7 +19,7 @@ class NotifyUsersOfSoonToBeExpiredBookingsTest:
     @mock.patch(
         "pcapi.scripts.booking.notify_soon_to_be_expired_bookings.send_soon_to_be_expired_bookings_recap_email_to_beneficiary"
     )
-    def should_call_email_service_for_non_eac_bookings_which_will_expire_in_7_days(
+    def should_call_email_service_for_individual_bookings_which_will_expire_in_7_days(
         self, mocked_email_recap, app
     ) -> None:
         # Given
@@ -40,7 +42,7 @@ class NotifyUsersOfSoonToBeExpiredBookingsTest:
         repository.save(dont_expire_in_7_days_cd_booking)
 
         # When
-        notify_users_of_soon_to_be_expired_non_eac_bookings()
+        notify_users_of_soon_to_be_expired_individual_bookings()
 
         # Then
         mocked_email_recap.assert_called_once_with(expire_in_7_days_dvd_booking.user, [expire_in_7_days_dvd_booking])
@@ -52,7 +54,7 @@ class NotifyUsersOfSoonToBeExpiredBookingsTest:
         self, mocked_email_recap, app
     ) -> None:
         """
-        No email should be sent to EAC booking users.
+        No email should be sent to educational booking users.
         As of september 2021, EAC offers are only of event type so not concerned
         with expiring bookings. But in case an EAC offer becomes compatible with thing type offers
         We want a test to cover this behavior
@@ -69,7 +71,7 @@ class NotifyUsersOfSoonToBeExpiredBookingsTest:
         )
 
         # When
-        notify_users_of_soon_to_be_expired_non_eac_bookings()
+        notify_users_of_soon_to_be_expired_individual_bookings()
 
         # Then
         assert not mocked_email_recap.called
