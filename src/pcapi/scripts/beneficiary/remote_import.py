@@ -7,6 +7,7 @@ from dateutil import parser as date_parser
 
 from pcapi import settings
 from pcapi.connectors.api_demarches_simplifiees import DMSGraphQLClient
+from pcapi.connectors.api_demarches_simplifiees import GraphQLApplicationStates
 from pcapi.connectors.api_demarches_simplifiees import get_application_details
 import pcapi.core.fraud.api as fraud_api
 import pcapi.core.fraud.models as fraud_models
@@ -19,6 +20,7 @@ from pcapi.core.users.models import User
 from pcapi.domain import user_emails
 from pcapi.domain.beneficiary_pre_subscription.validator import get_beneficiary_duplicates
 from pcapi.domain.demarches_simplifiees import get_closed_application_ids_for_demarche_simplifiee
+from pcapi.domain.demarches_simplifiees import get_existing_applications_id
 from pcapi.domain.user_activation import create_beneficiary_from_application
 from pcapi.models import ApiErrors
 from pcapi.models import ImportStatus
@@ -56,9 +58,20 @@ def run(procedure_id: int, use_graphql_api: bool = False) -> None:
     )
 
     if use_graphql_api:
+        already_process_applications = get_existing_applications_id(procedure_id)
         client = DMSGraphQLClient()
-        for application_details in client.get_applications_with_details(procedure_id):
+        for application_details in client.get_applications_with_details(
+            procedure_id, GraphQLApplicationStates.accepted
+        ):
             application_id = application_details["number"]
+            if application_id in already_process_applications:
+                client.archive_application(application_details["id"], application_details["instructeurs"][-1]["id"])
+                logger.info(
+                    "[BATCH][REMOTE IMPORT BENEFICIARIES] archiving application %d - Procedure %s",
+                    application_id,
+                    procedure_id,
+                )
+                continue
             process_application(
                 procedure_id,
                 application_id,

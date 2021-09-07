@@ -12,11 +12,11 @@
 #     }
 #   }
 # }
-query getApplication($demarcheNumber: Int!, $after: String) {
+query getApplication($demarcheNumber: Int!, $after: String, $state: DossierState) {
     demarche(number: $demarcheNumber) {
         id
         number
-        dossiers(first: 10, archived: false, after: $after) {
+        dossiers(first: 100, archived: false, state: $state, after: $after) {
             pageInfo {
                 endCursor
                 hasNextPage

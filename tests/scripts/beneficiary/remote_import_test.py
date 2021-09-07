@@ -1122,3 +1122,19 @@ class GraphQLSourceProcessApplicationTest:
 
         assert import_status.currentStatus == ImportStatus.CREATED
         assert import_status.beneficiary == user
+
+    @patch.object(DMSGraphQLClient, "get_applications_with_details")
+    @patch.object(DMSGraphQLClient, "archive_application")
+    def test_already_imported_user_is_archived(self, archive_application, get_applications_with_details):
+        procedure_id = 123
+        application_id = 123123
+
+        user = users_factories.BeneficiaryFactory()
+        users_factories.BeneficiaryImportFactory(beneficiary=user, sourceId=procedure_id, applicationId=application_id)
+        application = make_graphql_application(application_id, "closed", email=user.email)
+
+        get_applications_with_details.return_value = [application]
+
+        remote_import.run(procedure_id, use_graphql_api=True)
+        assert archive_application.call_count == 1
+        assert archive_application.call_args[0] == (application["id"], application["instructeurs"][0]["id"])

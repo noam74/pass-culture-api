@@ -282,7 +282,7 @@ def make_graphql_application(
         "motivation": "",
         "motivationAttachment": None,
         "attestation": None,
-        "instructeurs": [{"email": "instructor@example.com"}],
+        "instructeurs": [{"email": "instructor@example.com", "id": "SomeRandomId"}],
         "groupeInstructeur": {"id": "R3JvdXBlSW5zdHJ1Y3RldXItMjYxMzg=", "number": 2613, "label": "défaut"},
         "champs": [
             {

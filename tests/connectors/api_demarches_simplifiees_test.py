@@ -5,6 +5,7 @@ import pytest
 
 from pcapi.connectors.api_demarches_simplifiees import ApiDemarchesSimplifieesException
 from pcapi.connectors.api_demarches_simplifiees import DMSGraphQLClient
+from pcapi.connectors.api_demarches_simplifiees import GraphQLApplicationStates
 from pcapi.connectors.api_demarches_simplifiees import get_all_applications_for_procedure
 from pcapi.connectors.api_demarches_simplifiees import get_application_details
 
@@ -81,7 +82,7 @@ class GraphqlResponseTest:
         ]
 
         client = DMSGraphQLClient()
-        results = list(client.get_applications_with_details(123))
+        results = list(client.get_applications_with_details(123, GraphQLApplicationStates.accepted))
         assert client.execute_query.call_count == 2
         assert len(results) == 2
 

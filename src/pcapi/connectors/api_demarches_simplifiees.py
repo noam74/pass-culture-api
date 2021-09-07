@@ -25,6 +25,14 @@ class DmsApplicationStates(enum.Enum):
     without_continuation = enum.auto()
 
 
+class GraphQLApplicationStates(enum.Enum):
+    draft = "en_construction"
+    on_going = "en_instruction"
+    accepted = "accepte"
+    refused = "refuse"
+    without_continuation = "sans_suite"
+
+
 def get_all_applications_for_procedure(
     procedure_id: int, token: str, page: int = 1, results_per_page: int = 100
 ) -> dict:
@@ -67,9 +75,14 @@ class DMSGraphQLClient:
     def execute_query(self, query: str, variables: dict[str, Any]) -> Any:
         return self.client.execute(gql.gql(query), variable_values=variables)
 
-    def get_applications_with_details(self, procedure_id: int, page_token: str = "") -> Any:
+    def get_applications_with_details(
+        self, procedure_id: int, state: GraphQLApplicationStates, page_token: str = ""
+    ) -> Any:
         query = self.build_query("get_applications_with_details")
-        variables = {"demarcheNumber": procedure_id}
+        variables = {
+            "demarcheNumber": procedure_id,
+            "state": state.value,
+        }
         if page_token:
             variables["after"] = page_token
         results = self.execute_query(query, variables=variables)
