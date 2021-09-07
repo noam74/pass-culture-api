@@ -204,13 +204,13 @@ def generate_booking_token():
     raise ValueError("Could not generate new booking token")
 
 
-def find_expired_non_eac_bookings_ordered_by_user(expired_on: date = None) -> Query:
+def find_expired_individual_bookings_ordered_by_user(expired_on: date = None) -> Query:
     expired_on = expired_on or date.today()
     return (
-        Booking.query.filter(Booking.isCancelled.is_(True))
+        IndividualBooking.query.join(Booking)
+        .filter(Booking.isCancelled.is_(True))
         .filter(cast(Booking.cancellationDate, Date) == expired_on)
         .filter(Booking.cancellationReason == BookingCancellationReasons.EXPIRED)
-        .filter(Booking.educationalBookingId == None)
         .order_by(Booking.userId)
         .all()
     )

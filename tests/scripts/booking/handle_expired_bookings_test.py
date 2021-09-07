@@ -6,6 +6,7 @@ import pytest
 
 from pcapi.core.bookings.factories import BookingFactory
 from pcapi.core.bookings.factories import CancelledBookingFactory
+from pcapi.core.bookings.factories import CancelledIndividualBookingFactory
 from pcapi.core.bookings.factories import EducationalBookingFactory
 from pcapi.core.bookings.models import BookingCancellationReasons
 from pcapi.core.bookings.models import BookingStatus
@@ -146,39 +147,39 @@ class NotifyUsersOfExpiredBookingsTest:
         long_ago = now - timedelta(days=31)
         very_long_ago = now - timedelta(days=32)
         dvd = ProductFactory(subcategoryId=subcategories.SUPPORT_PHYSIQUE_FILM.id)
-        expired_today_dvd_booking = CancelledBookingFactory(
+        expired_today_dvd_booking = CancelledIndividualBookingFactory(
             stock__offer__product=dvd,
             dateCreated=long_ago,
             cancellationReason=BookingCancellationReasons.EXPIRED,
         )
         cd = ProductFactory(subcategoryId=subcategories.SUPPORT_PHYSIQUE_MUSIQUE.id)
-        expired_today_cd_booking = CancelledBookingFactory(
+        expired_today_cd_booking = CancelledIndividualBookingFactory(
             stock__offer__product=cd,
             dateCreated=long_ago,
             cancellationReason=BookingCancellationReasons.EXPIRED,
         )
         painting = ProductFactory(subcategoryId=subcategories.OEUVRE_ART.id)
-        _expired_yesterday_booking = CancelledBookingFactory(
+        _expired_yesterday_booking = CancelledIndividualBookingFactory(
             stock__offer__product=painting,
             dateCreated=very_long_ago,
             cancellationReason=BookingCancellationReasons.EXPIRED,
             cancellationDate=yesterday,
         )
 
-        handle_expired_bookings.notify_users_of_expired_non_eac_bookings()
+        handle_expired_bookings.notify_users_of_expired_individual_bookings()
 
         assert mocked_send_email_recap.call_count == 2
         assert mocked_send_email_recap.call_args_list[0][0] == (
-            expired_today_dvd_booking.user,
-            [expired_today_dvd_booking],
+            expired_today_dvd_booking.individualBooking.user,
+            [expired_today_dvd_booking.individualBooking],
         )
         assert mocked_send_email_recap.call_args_list[1][0] == (
-            expired_today_cd_booking.user,
-            [expired_today_cd_booking],
+            expired_today_cd_booking.individualBooking.user,
+            [expired_today_cd_booking.individualBooking],
         )
 
     @mock.patch("pcapi.scripts.booking.handle_expired_bookings.send_expired_bookings_recap_email_to_beneficiary")
-    def test_should_not_notify_of_todays_expired_eac_bookings(self, mocked_send_email_recap, app) -> None:
+    def test_should_not_notify_of_todays_expired_educational_bookings(self, mocked_send_email_recap, app) -> None:
         # Given
         now = datetime.utcnow()
         long_ago = now - timedelta(days=31)
@@ -192,7 +193,7 @@ class NotifyUsersOfExpiredBookingsTest:
         )
 
         # When
-        handle_expired_bookings.notify_users_of_expired_non_eac_bookings()
+        handle_expired_bookings.notify_users_of_expired_individual_bookings()
 
         # Then
         assert not mocked_send_email_recap.called
