@@ -119,6 +119,8 @@ class BeneficiaryUserView(ResendValidationEmailMixin, SuspensionMixin, BaseAdmin
         FilterByDepositTypeNotEqual(column=None, name="Type du portefeuille"),
     ]
 
+    list_template = "admin/beneficiary_user_list.html"
+
     @property
     def form_columns(self):
         fields = (

@@ -1,0 +1,31 @@
+{% extends 'admin/model/list.html' %}
+
+{% block list_row %}
+    {% block list_row_actions_column %}
+        {% if admin_view.column_display_actions %}
+            <td class="list-buttons-column">
+                {% block list_row_actions %}
+                    {% for action in list_row_actions %}
+                        {{ action.render_ctx(get_pk_value(row), row) }}
+                    {% endfor %}
+                {% endblock %}
+            </td>
+        {%- endif -%}
+    {% endblock %}
+
+    {% for c, name in list_columns %}
+        <td class="col-{{c}}">
+            {% if c == "deposit_type"  and get_value(row, c) == "GRANT_15" %}
+                <span style="background-color:#C7CEEA;padding:4px;border-radius:3px;">{{ get_value(row, c) }}</span>
+            {% elif c == "deposit_type"  and get_value(row, c) == "GRANT_16" %}
+                <span style="background-color:#B5EAD7;padding:4px;border-radius:3px;">{{ get_value(row, c) }}</span>
+            {% elif c == "deposit_type"  and get_value(row, c) == "GRANT_17" %}
+                <span style="background-color:#FFDAC1;padding:4px;border-radius:3px;">{{ get_value(row, c) }}</span>
+            {% elif c == "deposit_type"  and get_value(row, c) == "GRANT_18" %}
+                <span style="background-color:#FF9AA2;padding:4px;border-radius:3px;">{{ get_value(row, c) }}</span>
+            {% else %}
+                {{ get_value(row, c) }}
+            {%- endif -%}
+        </td>
+    {% endfor %}
+{% endblock %}
