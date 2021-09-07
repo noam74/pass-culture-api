@@ -413,25 +413,30 @@ def auto_mark_as_used_after_event() -> None:
             .filter(Stock.beginningDatetime < threshold)
     )
 
-    non_eac_bookings = (
+    individual_bookings = (
         bookings
         .filter(Booking.educationalBookingId == None)
     )
 
-    eac_bookings = (
+    educational_bookings = (
         bookings
         .filter(EducationalBooking.id == Booking.educationalBookingId)
         .filter(EducationalBooking.status == EducationalBookingStatus.USED_BY_INSTITUTE)
     )
     # fmt: on
-    n_non_eac_updated = non_eac_bookings.update(
+    n_individual_updated = individual_bookings.update(
         {"isUsed": True, "status": BookingStatus.USED, "dateUsed": now}, synchronize_session=False
     )
 
-    n_eac_updated = eac_bookings.update(
+    n_educational_updated = educational_bookings.update(
         {"isUsed": True, "status": BookingStatus.USED, "dateUsed": now}, synchronize_session=False
     )
 
     logger.info(
-        "Automatically marked bookings as used after event", extra={"bookings": n_non_eac_updated + n_eac_updated}
+        "Automatically marked individual bookings as used after event",
+        extra={"individualBookings": n_individual_updated},
+    )
+    logger.info(
+        "Automatically marked educational bookings as used after event",
+        extra={"educationalBookings": n_educational_updated},
     )
